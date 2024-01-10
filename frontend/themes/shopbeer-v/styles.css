@@ -1,0 +1,13 @@
+@import "theme-editor.css";
+@import url('./main-layout.css');
+@import url('./views/dashboard-view.css');
+@import url('./views/sales-view.css');
+@import url('./views/cadastros-view.css');    html {
+      --lumo-size-xl: 4rem;
+      --lumo-size-l: 3rem;
+      --lumo-size-m: 2.5rem;
+      --lumo-size-s: 2rem;
+      --lumo-size-xs: 1.75rem;
+      --lumo-body-text-color: hsla(214, 100%, 50%, 0.94);
+
+    }

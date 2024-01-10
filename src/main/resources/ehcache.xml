@@ -1,0 +1,61 @@
+<config xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+        xmlns='http://www.ehcache.org/v3'
+        xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.0.xsd">
+
+    <cache alias="br.com.rafaelvieira.shopbeer.domain.dto.SalesMonthDTO">
+        <key-type>java.lang.Object</key-type>
+        <value-type>java.lang.Object</value-type>
+        <resources>
+            <heap unit="entries">10000</heap>
+<!--            <offheap unit="MB">100</offheap>-->
+        </resources>
+    </cache>
+
+    <cache alias="br.com.rafaelvieira.shopbeer.domain.dto.OriginSalesDTO">
+        <key-type>java.lang.Object</key-type>
+        <value-type>java.lang.Object</value-type>
+        <resources>
+            <heap unit="entries">10000</heap>
+<!--            <offheap unit="MB">100</offheap>-->
+        </resources>
+    </cache>
+
+</config>
+
+
+<!--<ehcache updateCheck="false" monitoring="autodetect" dynamicConfig="true">-->
+<!--    <diskStore path="java.io.tmpdir" />-->
+<!--    <defaultCache-->
+<!--            maxElementsInMemory="10000"-->
+<!--            eternal="false"-->
+<!--            timeToIdleSeconds="120"-->
+<!--            timeToLiveSeconds="120"-->
+<!--            overflowToDisk="true"-->
+<!--            diskPersistent="false"-->
+<!--            diskExpiryThreadIntervalSeconds="120"-->
+<!--            memoryStoreEvictionPolicy="LRU"-->
+<!--            statistics="true">-->
+<!--    </defaultCache>-->
+<!--    <cache name="br.com.rafaelvieira.shopbeer.domain.dto.SalesMonthDTO"-->
+<!--           maxElementsInMemory="10000"-->
+<!--           eternal="false"-->
+<!--           timeToIdleSeconds="120"-->
+<!--           timeToLiveSeconds="120"-->
+<!--           overflowToDisk="true"-->
+<!--           diskPersistent="false"-->
+<!--           diskExpiryThreadIntervalSeconds="120"-->
+<!--           memoryStoreEvictionPolicy="LRU"-->
+<!--           statistics="true">-->
+<!--    </cache>-->
+<!--    <cache name="br.com.rafaelvieira.shopbeer.domain.dto.OriginSalesDTO"-->
+<!--           maxElementsInMemory="10000"-->
+<!--           eternal="false"-->
+<!--           timeToIdleSeconds="120"-->
+<!--           timeToLiveSeconds="120"-->
+<!--           overflowToDisk="true"-->
+<!--           diskPersistent="false"-->
+<!--           diskExpiryThreadIntervalSeconds="120"-->
+<!--           memoryStoreEvictionPolicy="LRU"-->
+<!--           statistics="true">-->
+<!--    </cache>-->
+<!--</ehcache>-->
