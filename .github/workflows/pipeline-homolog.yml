@@ -44,11 +44,10 @@ jobs:
       - name: Publish to GitHub Packages Docker
         uses: docker/build-push-action@v2
         with:
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-          registry: docker.pkg.github.com
-          repository: ${{ github.repository }}
-          tags: latest
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: docker.pkg.github.com/${{ github.repository }}/shopbeer-v:latest
 
       #Maven cache
       - name: Cache local Maven repository
