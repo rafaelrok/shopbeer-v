@@ -5,6 +5,13 @@
 .project
 .classpath
 
+/pom.xml
+/src/main/resources/.shopbeer-mail.properties
+/src/main/resources/.shopbeer-s3.properties
+/src/main/resources/application.properties
+/src/main/resources/application-dev.properties
+/src/main/resources/application-prod.properties
+
 *.iml
 .DS_Store
 
