@@ -5,7 +5,6 @@
 .project
 .classpath
 
-/pom.xml
 /src/main/resources/.shopbeer-mail.properties
 /src/main/resources/.shopbeer-s3.properties
 /src/main/resources/application.properties
