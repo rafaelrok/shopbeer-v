@@ -8,7 +8,7 @@ CREATE TABLE costumer (
     address VARCHAR(50),
     number VARCHAR(15),
     complement VARCHAR(20),
-    zipCode VARCHAR(15),
+    zip_code VARCHAR(15),
     code_city BIGINT(20),
     FOREIGN KEY (code_city) REFERENCES city(code)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

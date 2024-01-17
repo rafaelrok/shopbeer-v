@@ -15,7 +15,7 @@ import org.springframework.context.ApplicationContext;
  *
  */
 @SpringBootApplication
-@Theme(value = "shopbeer-v", variant = Lumo.DARK)
+@Theme(value = "shopbeer-v", variant = Lumo.LIGHT)
 public class Application implements AppShellConfigurator {
 
     private static ApplicationContext APPLICATION_CONTEXT;

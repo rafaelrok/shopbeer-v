@@ -3,6 +3,7 @@ package br.com.rafaelvieira.shopbeer.services;
 import br.com.rafaelvieira.shopbeer.domain.Costumer;
 import br.com.rafaelvieira.shopbeer.repository.CostumerRepository;
 import br.com.rafaelvieira.shopbeer.services.exception.CpfCnpjCustomerAlreadyRegisteredException;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,10 +24,29 @@ public class CostumerService {
     public void save(Costumer costumer) {
         Optional<Costumer> existingCostumer = costumerRepository.findByCpfcnpj(costumer.getCpfOrCnpjNoFormatting());
         if (existingCostumer.isPresent()) {
-            throw new CpfCnpjCustomerAlreadyRegisteredException("CPF/CNPJ already registered");
+            throw new CpfCnpjCustomerAlreadyRegisteredException("CPF/CNPJ Já esta cadastrado!");
         }
-
         costumerRepository.save(costumer);
+    }
+
+    public Optional<Costumer> findByCpfcnpj(String cpfcnpj) {
+        cpfcnpj = cpfcnpj.replaceAll("\\D", "");
+        return costumerRepository.findByCpfcnpj(cpfcnpj);
+    }
+
+    public Optional<Costumer> findByName(String name) {
+        return costumerRepository.findByNameStartingWithIgnoreCase(name);
+    }
+
+    public boolean existsByCpfcnpj(String cpfcnpj) {
+        return costumerRepository.existsByCpfcnpj(cpfcnpj);
+    }
+
+    public Optional<Costumer> findById(Long code) {
+        return costumerRepository.findById(code);
+    }
+    public List<Costumer> findAll() {
+        return costumerRepository.findAll();
     }
 
     public Optional<Costumer> get(Long id) {
@@ -52,4 +72,5 @@ public class CostumerService {
     public int count() {
         return (int) costumerRepository.count();
     }
+
 }

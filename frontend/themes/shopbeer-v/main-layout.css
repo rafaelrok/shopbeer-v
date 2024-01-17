@@ -18,3 +18,12 @@ vaadin-side-nav-item vaadin-icon {
 [slot="drawer"]:is(header, footer):is(:empty) {
   display: none;
 }
+
+.navFilters-custom-font {
+  font-family: var(--lumo-font-family);
+  font-size: var(--lumo-font-size-s);
+  font-weight: 600;
+  color: var(--lumo-secondary-text-color);
+  text-transform: uppercase;
+  margin: var(--lumo-space-s) 0;
+}

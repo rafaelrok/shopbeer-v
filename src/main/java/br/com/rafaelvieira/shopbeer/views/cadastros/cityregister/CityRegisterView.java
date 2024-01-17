@@ -12,6 +12,7 @@ import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.Uses;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -40,7 +41,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
-import com.vaadin.flow.theme.lumo.LumoUtility.Gap;
+import com.vaadin.flow.theme.lumo.LumoUtility;
 import java.util.*;
 import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,7 @@ import org.vaadin.lineawesome.LineAwesomeIcon;
 @Route(value = "city-register", layout = MainLayout.class)
 @AnonymousAllowed
 @Uses(Icon.class)
+@CssImport("themes/shopbeer-v/views/city-register-view.css")
 public class CityRegisterView extends Composite<VerticalLayout> {
 
     @Autowired()
@@ -85,45 +87,58 @@ public class CityRegisterView extends Composite<VerticalLayout> {
         this.cityService = cityService;
         this.stateRepository = stateRepository;
 
+        comboBoxCountry.addClassName("city-register-view-country-combobox");
+        comboBoxState.addClassName("city-register-view-state-combobox");
+        textField.addClassName("city-register-view-text-field");
+        stateButton.addClassName("city-register-view-state-button");
+        buttonSecondary.addClassName("city-register-view-button-secondary");
+        stripedGrid.addClassName("city-register-view-grid");
+
         getContent().setWidth("100%");
         getContent().getStyle().set("flex-grow", "1");
         getContent().setJustifyContentMode(JustifyContentMode.START);
         getContent().setAlignItems(Alignment.CENTER);
 
         layoutColumn2.setWidth("100%");
-        layoutColumn2.setMaxWidth("900px");
-        layoutColumn2.setHeight("min-content");
+        layoutColumn2.setMaxWidth("1190px");
+        layoutColumn2.getStyle().set("flex", "1");
 
+        layoutRow.addClassName(LumoUtility.Gap.MEDIUM);
+        layoutRow.setWidth("100%");
+        layoutRow.getThemeList().add("spacing-s");
+        layoutRow.getStyle().set("flex", "1");
+        layoutRow.setSpacing(true);
+        layoutRow.setMargin(true);
+        layoutRow.setAlignItems(FlexComponent.Alignment.CENTER);
+        
         h3.setText("Cadastro de Cidades");
         h3.setWidth("100%");
 
         formLayout2Col.setWidth("100%");
+        formLayout2Col.getStyle().setBorder("1px solid var(--lumo-contrast-30pct)");
+        formLayout2Col.getStyle().setBorderRadius("5px");
+        formLayout2Col.getStyle().set("padding-left", "20px");
+        formLayout2Col.getStyle().set("padding-top", "10px");
+        formLayout2Col.getStyle().set("padding-right", "0");
+        formLayout2Col.getStyle().set("padding-bottom", "20px");
         formLayout2Col.setResponsiveSteps(
-                new FormLayout.ResponsiveStep("32em", 1),
-                new FormLayout.ResponsiveStep("42em", 2),
-                new FormLayout.ResponsiveStep("52em", 3)
+                new FormLayout.ResponsiveStep("0", 1),
+                new FormLayout.ResponsiveStep("700px", 2),
+                new FormLayout.ResponsiveStep("900px", 3),
+                new FormLayout.ResponsiveStep("1100px", 4)
         );
 
         textField.setLabel("Name");
         textField.setWidth("100%");
-        textField.setMaxWidth("420px");
+        textField.setMaxWidth("350px");
         textField.setClearButtonVisible(true);
         textField.setPlaceholder("Digite o nome da cidade");
         textField.setRequired(true);
         textField.setPrefixComponent(LineAwesomeIcon.CITY_SOLID.create());
-        
-        comboBoxCountry.setLabel("Pais");
-        comboBoxCountry.setWidth("100%");
-        comboBoxCountry.setMaxWidth("250px");
-        comboBoxCountry.setClearButtonVisible(true);
-        comboBoxCountry.setPlaceholder("Selecione um país");
-        comboBoxCountry.setRequired(true);
-        comboBoxCountry.setPrefixComponent(LineAwesomeIcon.GLOBE_SOLID.create());
-        setComboBoxCountry(comboBoxCountry);
 
         comboBoxState.setLabel("Estado");
         comboBoxState.setWidth("100%");
-        comboBoxState.setMaxWidth("320px");
+        comboBoxState.setMaxWidth("250px");
         comboBoxState.setClearButtonVisible(true);
         comboBoxState.setPlaceholder("Localizar estado");
         comboBoxState.setRequired(true);
@@ -137,13 +152,19 @@ public class CityRegisterView extends Composite<VerticalLayout> {
         stateButton.setIcon(new Icon(VaadinIcon.PLUS));
         stateButton.addClickListener(e -> {
             State state = new State();
-            dialog.removeAll();
+            cleanDialogFields();
             stateNew(state);
         });
 
-        layoutRow.addClassName(Gap.MEDIUM);
-        layoutRow.setWidth("100%");
-        layoutRow.getStyle().set("flex-grow", "1");
+        comboBoxCountry.setLabel("Pais");
+        comboBoxCountry.setWidth("100%");
+        comboBoxCountry.setMaxWidth("250px");
+        comboBoxCountry.setClearButtonVisible(true);
+        comboBoxCountry.setPlaceholder("Selecione um país");
+        comboBoxCountry.setRequired(true);
+        comboBoxCountry.setPrefixComponent(LineAwesomeIcon.GLOBE_SOLID.create());
+        comboBoxCountry.addClassName("country-combobox");
+        setComboBoxCountry(comboBoxCountry);
 
         if(checker.checkPermission()){
             buttonPrimary.setEnabled(true);
@@ -170,6 +191,9 @@ public class CityRegisterView extends Composite<VerticalLayout> {
             stripedGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
             stripedGrid.setPageSize(10);
             stripedGrid.getStyle().setBackgroundColor("var(--lumo-contrast-5pct)");
+            stripedGrid.getStyle().set("border", "1px solid var(--lumo-contrast-40pct)");
+            stripedGrid.getStyle().set("border-radius", "5px");
+//            stripedGrid.getStyle().set("padding", "10px");
             stripedGrid.getHeaderRows().stream()
                     .flatMap(row -> row.getCells().stream())
                     .forEach(cell -> cell.getComponent().getElement().getStyle().set("font-weight", "600"));
@@ -178,8 +202,8 @@ public class CityRegisterView extends Composite<VerticalLayout> {
                         Div divCode = new Div();
                         divCode.setText(String.valueOf(city.getCode()));
                         divCode.getStyle().set("display", "flex");
-                        divCode.getStyle().set("justify-content", "center");
-                        divCode.getStyle().set("align-items", "center");
+                        divCode.getStyle().set("justify-content", "start");
+                        divCode.getStyle().set("align-items", "start");
                         return divCode;
                     })).setHeader(new Html("<div style='text-align:center;'>Código</div>"))
                     .setWidth("95px")
@@ -283,25 +307,35 @@ public class CityRegisterView extends Composite<VerticalLayout> {
     private void createFooterState(Dialog dialog, State state) {
         Button cancelButton = new Button("Cancelar", e -> dialog.close());
         Button saveButton = new Button("Salvar", e -> {
-            try{
-                cleanDialogFields();
-                state.setName(textDialogStateName.getValue());
-                state.setAcronym(textDialogStateAcronym.getValue());
-                stateRepository.save(state);
-                dialog.close();
-                comboBoxState.setItems(stateRepository.findAll());
-                Notification notification = Notification.show("Estado cadastrado com sucesso!", 6000,
-                        Notification.Position.TOP_CENTER);
-                notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+            try {
+                String stateName = textDialogStateName.getValue();
+                boolean stateExists = stateRepository.existsByName(stateName);
+                if (stateExists) {
+                    textDialogStateName.setInvalid(true);
+                    textDialogStateName.setErrorMessage("Estado já existe!");
+                    textDialogStateName.clear();
+                    textDialogStateAcronym.clear();
+                } else {
+                    state.setName(textDialogStateName.getValue());
+                    state.setAcronym(textDialogStateAcronym.getValue());
+                    stateRepository.save(state);
+                    dialog.close();
+                    comboBoxState.setItems(stateRepository.findAll());
+                    Notification notification =
+                            Notification.show(
+                                    "Estado cadastrado com sucesso!", 6000, Notification.Position.TOP_CENTER);
+                    notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                }
             } catch (Exception exception) {
-                dialog.close();
-                Notification notification = Notification.show("Estado não cadastrado: " + exception.getMessage(), 6000,
-                        Notification.Position.MIDDLE);
+                Notification notification =
+                        Notification.show(
+                                "Estado não cadastrado: " + exception.getMessage(),
+                                6000,
+                                Notification.Position.MIDDLE);
                 notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
             }
         });
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-
         dialog.getFooter().add(cancelButton);
         dialog.getFooter().add(saveButton);
     }
@@ -523,7 +557,7 @@ public class CityRegisterView extends Composite<VerticalLayout> {
     }
 
     private void cancelFields() {
-        dialog.removeAll();
+        cleanDialogFields();
         dialog.setHeaderTitle("Cadastro de Cidade");
         dialog.add("Tem certeza de que deseja cancelar o cadastro deste cidade?");
         dialog.open();
@@ -542,8 +576,11 @@ public class CityRegisterView extends Composite<VerticalLayout> {
 
     private void cleanFields() {
         textField.clear();
+        textField.setInvalid(false);
         comboBoxCountry.clear();
+        comboBoxCountry.setInvalid(false);
         comboBoxState.clear();
+        comboBoxState.setInvalid(false);
     }
 
     private void cleanDialogFields() {

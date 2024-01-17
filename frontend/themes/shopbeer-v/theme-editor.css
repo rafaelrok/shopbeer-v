@@ -2,14 +2,22 @@
  * This file has been created by the Vaadin Theme Editor. Please note that
  * manual changes to individual CSS properties may be overwritten by the theme editor.
  */
-vaadin-date-picker.user-manager-view-date-picker-1::part(input-field) {}
-
-vaadin-email-field.user-manager-view-email-field-1::part(input-field) {}
-
 vaadin-form-layout.user-manager-view-form-layout-1 {
   margin:auto;
   padding:var(--lumo-space-xs);
   width:auto;
+}
+
+vaadin-grid.costumer-register-view-grid-1 vaadin-grid-cell-content>vaadin-checkbox::part(checkbox) {
+  border-radius:var(--lumo-border-radius-m);
+  border-style:solid;
+  border-width:1px;
+}
+
+vaadin-grid.costumer-register-view-grid-1 vaadin-grid-cell-content>vaadin-checkbox[checked]::part(checkbox) {
+  border-radius:var(--lumo-border-radius-m);
+  border-style:solid;
+  border-width:1px;
 }
 
 vaadin-login-overlay-wrapper.login-view-login-overlay-1 vaadin-login-form vaadin-button[theme~="submit"] {
@@ -36,12 +44,6 @@ vaadin-login-overlay-wrapper.login-view-login-overlay-1::part(brand) {
   border-radius:0;
   border-width:0px;
 }
-
-vaadin-password-field.user-manager-view-password-field-1::part(error-message) {}
-
-vaadin-password-field.user-manager-view-password-field-1::part(input-field) {}
-
-vaadin-text-field.user-manager-view-text-field-1::part(input-field) {}
 
 vaadin-vertical-layout.user-manager-view-vertical-layout-1 {
   gap:var(--lumo-space-s);
