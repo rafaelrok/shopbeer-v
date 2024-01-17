@@ -37,6 +37,10 @@ public class CityService {
         return cityRepository.findByName(name);
     }
 
+    public boolean existsByName(String name) {
+        return cityRepository.existsByName(name);
+    }
+
     public Optional<City> findByAllIgnoreCase() {
         return cityRepository.findByAllIgnoreCase();
     }

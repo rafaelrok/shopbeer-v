@@ -9,14 +9,15 @@ import br.com.rafaelvieira.shopbeer.services.GroupEmployeeService;
 import br.com.rafaelvieira.shopbeer.services.UserEmployeeService;
 import br.com.rafaelvieira.shopbeer.storage.PhotoStorage;
 import br.com.rafaelvieira.shopbeer.views.MainLayout;
+import com.vaadin.componentfactory.addons.inputmask.InputMask;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.Uses;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -56,10 +57,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-@PageTitle("User manager")
+@PageTitle("Gerenciador de usuários")
 @Route(value = "user-manager", layout = MainLayout.class)
 @AnonymousAllowed
 @Uses(Icon.class)
+@CssImport("themes/shopbeer-v/views/user-manager-view.css")
 public class UserManagerView extends Composite<VerticalLayout> {
 
     @Autowired()
@@ -83,10 +85,11 @@ public class UserManagerView extends Composite<VerticalLayout> {
     TextField textField = new TextField();
     TextField textUsername = new TextField();
     DatePicker datePicker = new DatePicker();
+    InputMask datePickerInputMask = new InputMask("00/00/0000");
     EmailField emailField = new EmailField();
     ComboBox comboBoxRole = new ComboBox();
     ComboBox comboBoxStatus = new ComboBox();
-    MultiSelectComboBox multComboBox = new MultiSelectComboBox();
+    ComboBox comboBoxGroup = new ComboBox();
     Div passwordStrength = new Div();
     PasswordField passwordField = new PasswordField();
     PasswordField passwordField2 = new PasswordField();
@@ -102,7 +105,9 @@ public class UserManagerView extends Composite<VerticalLayout> {
 
     UserPermissionChecker<UserEmployee> checker = new UserPermissionChecker<>(securityContextHolder, allowedRoles);
 
-    public UserManagerView(UserEmployeeService userEmployeeService, GroupEmployeeService groupEmployeeService, PhotoStorage photoStorage, List<String> allowedRoles) {
+    public UserManagerView(UserEmployeeService userEmployeeService,
+                           GroupEmployeeService groupEmployeeService,
+                           PhotoStorage photoStorage, List<String> allowedRoles) {
         this.userEmployeeService = userEmployeeService;
         this.groupEmployeeService = groupEmployeeService;
         this.photoStorage = photoStorage;
@@ -112,11 +117,19 @@ public class UserManagerView extends Composite<VerticalLayout> {
         layoutColumn2.addClassName("user-manager-view-vertical-layout-1");
         formLayout2Col.addClassName("user-manager-view-form-layout-1");
         textUsername.addClassName("user-manager-view-text-field-1");
+        textField.addClassName("user-manager-view-text-field-2");
         emailField.addClassName("user-manager-view-email-field-1");
         datePicker.setOverlayClassName("user-manager-view-date-picker-1");
-        datePicker.addClassName("user-manager-view-date-picker-1");
-        passwordField2.addClassName("user-manager-view-password-field-1");
-        stripedGrid.addClassName("user-manager-view-grid-1");
+        datePicker.addClassName("user-manager-view-date-picker");
+        passwordField.addClassName("user-manager-view-password-field-1");
+        passwordField2.addClassName("user-manager-view-password-field-2");
+        stripedGrid.addClassName("user-manager-view-grid-striped");
+        comboBoxRole.addClassName("user-manager-view-combo-box-1");
+        comboBoxStatus.addClassName("user-manager-view-combo-box-2");
+        comboBoxGroup.addClassName("user-manager-view-multi-select-combo-box-1");
+        upload.addClassName("user-manager-view-upload-1");
+        buttonSave.addClassName("user-manager-view-button-save");
+        buttonCancel.addClassName("user-manager-view-button-cancel");
 
         passwordStrengthText = new Span();
 
@@ -125,61 +138,84 @@ public class UserManagerView extends Composite<VerticalLayout> {
         getContent().setJustifyContentMode(JustifyContentMode.START);
         getContent().setAlignItems(Alignment.CENTER);
 
-        layoutColumn2.setWidth("auto");
-        layoutColumn2.setMaxWidth("1190px");
-        layoutColumn2.setHeight("min-content");
+        layoutColumn2.setWidth("100%");
+        layoutColumn2.setMaxWidth("1170px");
+        layoutColumn2.getStyle().set("flex", "1");
 
         h3.setText("Cadastro de usuários");
         h3.setWidth("100%");
 
-        formLayout2Col.setWidth("100%");
+        formLayout2Col.setWidth("auto");
+        formLayout2Col.getStyle().setBorder("1px solid var(--lumo-contrast-30pct)");
+        formLayout2Col.getStyle().setBorderRadius("5px");
+        formLayout2Col.getStyle().setPaddingLeft("20px");
+        formLayout2Col.getStyle().setPaddingTop("10px");
+        formLayout2Col.getStyle().setPaddingBottom("20px");
         formLayout2Col.setResponsiveSteps(
-                new FormLayout.ResponsiveStep("32em", 1),
-                new FormLayout.ResponsiveStep("42em", 2),
-                new FormLayout.ResponsiveStep("52em", 3)
+                new FormLayout.ResponsiveStep("0", 1),
+                new FormLayout.ResponsiveStep("700px", 2),
+                new FormLayout.ResponsiveStep("900px", 3)
         );
 
         textField.setLabel("Nome*");
+        textField.setPlaceholder("Digite seu nome completo");
         textField.setWidth("100%");
         textField.setMaxWidth("380px");
         textField.setClearButtonVisible(true);
+        textField.setRequired(true);
+        textField.setRequiredIndicatorVisible(true);
+        textField.setErrorMessage("Por favor, digite seu nome completo");
         textField.setPrefixComponent(VaadinIcon.USER.create());
 
         datePicker.setLabel("Data de Nascimento");
         datePicker.setWidth("100%");
         datePicker.setMaxWidth("180px");
         datePicker.setClearButtonVisible(true);
+        datePicker.setPlaceholder("__/__/____");
+        datePicker.setRequired(true);
+        datePicker.setRequiredIndicatorVisible(true);
+        datePicker.setErrorMessage("Data deve ser preenchida");
+        datePicker.setLocale(Locale.forLanguageTag("pt-BR"));
+        datePickerInputMask.extend(datePicker);
 
         emailField.setLabel("Email");
+        emailField.setPlaceholder("Digite seu e-mail");
         emailField.setWidth("100%");
         emailField.setMaxWidth("380px");
         emailField.setClearButtonVisible(true);
+        emailField.setRequired(true);
         emailField.setPattern("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$");
         emailField.setErrorMessage("Por favor, digite um e-mail válido");
         emailField.setPrefixComponent(VaadinIcon.ENVELOPE_O.create());
 
-        comboBoxRole.setLabel("Perfil*");
+        comboBoxRole.setLabel("Perfil");
         comboBoxRole.setWidth("100%");
-        comboBoxRole.setMaxWidth("380px");
+        comboBoxRole.setMaxWidth("340px");
         comboBoxRole.setClearButtonVisible(true);
         comboBoxRole.setPlaceholder("Selecione um perfil");
         comboBoxRole.setRequired(true);
+        comboBoxRole.setErrorMessage("Por favor, selecione um perfil");
         setMultiSelectComboBoxRole(comboBoxRole);
 
-        comboBoxStatus.setLabel("Status*");
+        comboBoxStatus.setLabel("Situação");
         comboBoxStatus.setWidth("100%");
         comboBoxStatus.setMaxWidth("280px");
         comboBoxStatus.setRequired(true);
-        comboBoxStatus.setPlaceholder("Selecione um status");
+        comboBoxStatus.setRequiredIndicatorVisible(true);
+        comboBoxStatus.setErrorMessage("Por favor, selecione uma situação");
+        comboBoxStatus.setPlaceholder("Situação do usuário");
         comboBoxStatus.setClearButtonVisible(true);
         setComboBoxStatusUserEmployee(comboBoxStatus);
 
-        multComboBox.setLabel("Grupo*");
-        multComboBox.setWidth("100%");
-        multComboBox.setMaxWidth("380px");
-        multComboBox.setClearButtonVisible(true);
-        multComboBox.setPlaceholder("Selecione um/ou mais grupos");
-        setMultiSelectComboBoxGroupEmployee(multComboBox);
+        comboBoxGroup.setLabel("Grupo");
+        comboBoxGroup.setWidth("100%");
+        comboBoxGroup.setMaxWidth("340px");
+        comboBoxGroup.setClearButtonVisible(true);
+        comboBoxGroup.setRequired(true);
+        comboBoxGroup.setRequiredIndicatorVisible(true);
+        comboBoxGroup.setErrorMessage("Por favor, selecione um grupo");
+        comboBoxGroup.setPlaceholder("Selecione um grupo");
+        setMultiSelectComboBoxGroupEmployee(comboBoxGroup);
 
         checkIcon = VaadinIcon.CHECK.create();
         checkIcon.setVisible(false);
@@ -188,7 +224,7 @@ public class UserManagerView extends Composite<VerticalLayout> {
         passwordStrength.add(new Text("4 a 8 caracteres/Nível da senha: "),
                 passwordStrengthText);
 
-        passwordField.setLabel("Senha*");
+        passwordField.setLabel("Senha");
         passwordField.setPlaceholder("Digite sua senha");
         passwordField.setWidth("100%");
         passwordField.setMaxWidth("380px");
@@ -207,7 +243,7 @@ public class UserManagerView extends Composite<VerticalLayout> {
             updateHelper(password);
         });
 
-        passwordField2.setLabel("Confirma Senha*");
+        passwordField2.setLabel("Confirma Senha");
         passwordField2.setPlaceholder("Confirme sua senha");
         passwordField2.setWidth("100%");
         passwordField2.setMaxWidth("280px");
@@ -229,15 +265,19 @@ public class UserManagerView extends Composite<VerticalLayout> {
             }
         });
 
-        textUsername.setLabel("Nome de Usuário*");
+        textUsername.setLabel("Nome de Usuário");
+        textUsername.setPlaceholder("Digite o nome de usuário");
         textUsername.setWidth("100%");
         textUsername.setMaxWidth("280px");
         textUsername.setClearButtonVisible(true);
+        textUsername.setRequired(true);
+        textUsername.setRequiredIndicatorVisible(true);
+        textUsername.setErrorMessage("Por favor, digite o nome de usuário");
         textUsername.setPrefixComponent(VaadinIcon.USER.create());
 
         upload.setAutoUpload(false);
         upload.setWidth("100%");
-        upload.getStyle().setBackgroundColor("var(--lumo-contrast-5pct)");
+        upload.getStyle().setBackgroundColor("var(--lumo-contrast-20pct)");
         upload.setMaxFiles(1);
         upload.setAcceptedFileTypes("image/jpeg", "image/png");
         upload.setMaxFileSize(maxFileSizeInBytes);
@@ -296,7 +336,7 @@ public class UserManagerView extends Composite<VerticalLayout> {
 
         TextField searchField = new TextField();
         searchField.setWidth("100%");
-        searchField.setPlaceholder("Procurar");
+        searchField.setPlaceholder("Procurar usuário");
         searchField.setPrefixComponent(new Icon(VaadinIcon.SEARCH));
         searchField.setValueChangeMode(ValueChangeMode.EAGER);
         searchField.addValueChangeListener(e -> dataView.refreshAll());
@@ -321,6 +361,8 @@ public class UserManagerView extends Composite<VerticalLayout> {
         stripedGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
         stripedGrid.setPageSize(10);
         stripedGrid.getStyle().setBackgroundColor("var(--lumo-contrast-5pct)");
+        stripedGrid.getStyle().set("border", "1px solid var(--lumo-contrast-40pct)");
+        stripedGrid.getStyle().set("border-radius", "5px");
         stripedGrid.getHeaderRows().stream()
                 .flatMap(row -> row.getCells().stream())
                 .forEach(cell -> cell.getComponent().getElement().getStyle().set("font-weight", "600"));
@@ -329,16 +371,16 @@ public class UserManagerView extends Composite<VerticalLayout> {
             Div divCode = new Div();
             divCode.setText(String.valueOf(userEmployee.getCode()));
             divCode.getStyle().set("display", "flex");
-            divCode.getStyle().set("justify-content", "start");
-            divCode.getStyle().set("align-items", "start");
+            divCode.getStyle().set("justify-content", "center");
+            divCode.getStyle().set("align-items", "center");
             return divCode;
-        })).setHeader(new Html("<div style='text-align:center;'>Código</div>"))
+        })).setHeader(new Html("<div style='text-align:center; color:white'>CÓDIGO</div>"))
                 .setAutoWidth(true).setFlexGrow(0)
                 .setSortable(true).setKey("code")
-                .setFooter(String.format("%d Total Usuários", userEmployees.size()));
+                .setFooter(new Html("<div style='color:white'>" + String.format("Total Usuários: %d", userEmployees.size()) + "</div>"));
 
         stripedGrid.addColumn(createEmployeeRenderer())
-                .setHeader(new Html("<div style='text-align:center;'>Informações</div>"))
+                .setHeader(new Html("<div style='text-align:center; color:white'>DADOS PESSOAL</div>"))
                 .setSortOrderProvider(
                         direction -> (Stream<QuerySortOrder>) dataView
                                 .setSortOrder(UserEmployee::getName, direction))
@@ -351,25 +393,25 @@ public class UserManagerView extends Composite<VerticalLayout> {
             divCode.getStyle().set("justify-content", "center");
             divCode.getStyle().set("align-items", "center");
             return divCode;
-        })).setHeader(new Html("<div style='text-align:center;'>Usuário</div>"))
+        })).setHeader(new Html("<div style='text-align:center; color:white'>USUÁRIO</div>"))
                 .setAutoWidth(true).setFlexGrow(0);
 
         stripedGrid.addColumn(createComponentGroupEmployee())
-                .setHeader("Grupo")
+                .setHeader(new Html("<div style='text-align:center; color:white'>GRUPO</div>"))
                 .setAutoWidth(true).setFlexGrow(0);
 
         stripedGrid.addColumn(createStatusComponentRenderer())
-                .setHeader(new Html("<div style='text-align:center;'>Status</div>"))
+                .setHeader(new Html("<div style='text-align:center; color:white'>STATUS</div>"))
                 .setAutoWidth(true).setFlexGrow(0)
                 .setFooter(createStatusFooterText(userEmployees));
 
         stripedGrid.addColumn(createProfileComponentRenderer())
-                .setHeader(new Html("<div style='text-align:center;'>Perfil</div>"))
+                .setHeader(new Html("<div style='text-align:center; color:white'>PERFIL</div>"))
                 .setAutoWidth(true).setFlexGrow(0);
 
         stripedGrid.addColumn(
                 new ComponentRenderer<>(this::actionManager))
-                .setHeader(new Html("<div style='text-align:center;'>Ações</div>"));
+                .setHeader(new Html("<div style='text-align:center; color:white'>AÇÕES</div>"));
 
         stripedGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
         // end::snippet1[]
@@ -384,7 +426,7 @@ public class UserManagerView extends Composite<VerticalLayout> {
         formLayout2Col.add(datePicker);
         formLayout2Col.add(emailField);
         formLayout2Col.add(comboBoxStatus);
-        formLayout2Col.add(multComboBox);
+        formLayout2Col.add(comboBoxGroup);
         formLayout2Col.add(passwordField);
         formLayout2Col.add(passwordField2);
         formLayout2Col.add(comboBoxRole);
@@ -402,10 +444,10 @@ public class UserManagerView extends Composite<VerticalLayout> {
         statusUserEmployees.add(StatusUserEmployee.ACTIVATE);
         statusUserEmployees.add(StatusUserEmployee.DISABLE);
         comboBox.setItems(statusUserEmployees);
-        comboBox.setItemLabelGenerator(g -> ((StatusUserEmployee) g).name());
+        comboBox.setItemLabelGenerator(g -> ((StatusUserEmployee) g).getName());
     }
 
-    public void setMultiSelectComboBoxGroupEmployee(MultiSelectComboBox comboBox) {
+    public void setMultiSelectComboBoxGroupEmployee(ComboBox comboBox) {
             List<GroupEmployee> groups = groupEmployeeService.findAll();
         comboBox.setItems(groups);
         comboBox.setItemLabelGenerator(g -> ((GroupEmployee) g).getName());
@@ -416,7 +458,7 @@ public class UserManagerView extends Composite<VerticalLayout> {
         roles.add(Role.ADMIN);
         roles.add(Role.USER);
         comboBox.setItems(roles);
-        comboBox.setItemLabelGenerator(g -> ((Role) g).name());
+        comboBox.setItemLabelGenerator(g -> ((Role) g).getName());
     }
 
     private void setGridSampleData(Grid grid) {
@@ -534,8 +576,9 @@ public class UserManagerView extends Composite<VerticalLayout> {
                 StatusUserEmployee statusUserEmployee = userEmployeeEdit.isActive() ? StatusUserEmployee.ACTIVATE : StatusUserEmployee.DISABLE;
                 comboBoxStatus.setValue(statusUserEmployee);
                 GroupEmployee groupEmployee = userEmployeeEdit.getGroupEmployees().get(0);
-                multComboBox.setValue(new HashSet<>(Collections.singletonList(groupEmployee)));
-                comboBoxRole.setValue(userEmployeeEdit.getRoles().stream().findFirst().orElseThrow());
+                comboBoxGroup.setValue(groupEmployee);
+                Role role = userEmployeeEdit.getRoles().stream().findFirst().orElseThrow();
+                comboBoxRole.setValue(role);
                 dialog.close();
             });
             dialog.getFooter().add(confirmButton);
@@ -572,10 +615,10 @@ public class UserManagerView extends Composite<VerticalLayout> {
         dialog.open();
     }
 
-    private static String createStatusFooterText(List<UserEmployee> userEmployees) {
+    private static Html createStatusFooterText(List<UserEmployee> userEmployees) {
         long activeCount = userEmployees.stream().filter(UserEmployee::isActive)
                 .count();
-        return String.format("%s Ativos", activeCount);
+        return new Html("<div style='color:white'>" + String.format("%s Ativos", activeCount) + "</div>");
     }
 
     private void updateHelper(String password) {
@@ -608,7 +651,8 @@ public class UserManagerView extends Composite<VerticalLayout> {
                 StatusUserEmployee statusUserEmployee = (StatusUserEmployee) comboBoxStatus.getValue();
                 boolean active = statusUserEmployee == StatusUserEmployee.ACTIVATE;
                 userEmployee.setActive(active);
-                userEmployee.setGroupEmployees(new ArrayList<>(multComboBox.getValue()));
+                GroupEmployee selectedGroup = (GroupEmployee) comboBoxGroup.getValue();
+                userEmployee.setGroupEmployees(new ArrayList<>(Arrays.asList(selectedGroup)));
                 userEmployee.setRoles(new HashSet<>(Collections.singletonList((Role) comboBoxRole.getValue())));
                 userEmployee.setPassword(passwordField.getValue());
                 userEmployee.setConfirmPassword(passwordField2.getValue());
@@ -638,7 +682,8 @@ public class UserManagerView extends Composite<VerticalLayout> {
                 StatusUserEmployee statusUserEmployee = (StatusUserEmployee) comboBoxStatus.getValue();
                 boolean active = statusUserEmployee == StatusUserEmployee.ACTIVATE;
                 userEmployee.setActive(active);
-                userEmployee.setGroupEmployees(new ArrayList<>(multComboBox.getValue()));
+                GroupEmployee selectedGroup = (GroupEmployee) comboBoxGroup.getValue();
+                userEmployee.setGroupEmployees(new ArrayList<>(Arrays.asList(selectedGroup)));
                 userEmployee.setRoles(new HashSet<>(Collections.singletonList((Role) comboBoxRole.getValue())));
                 if(!passwordField.getValue().isEmpty()){
                     userEmployee.setPassword(passwordField.getValue());
@@ -714,6 +759,7 @@ public class UserManagerView extends Composite<VerticalLayout> {
     }
 
     private void cancelFields() {
+        cleanDialogFields();
         dialog.removeAll();
         dialog.setHeaderTitle("Cadastro de usuário");
         dialog.add("Tem certeza de que deseja cancelar o cadastro deste usuário?");
@@ -733,16 +779,25 @@ public class UserManagerView extends Composite<VerticalLayout> {
 
     private void cleanFields() {
         textField.clear();
+        textField.setInvalid(false);
         textUsername.clear();
+        textUsername.setInvalid(false);
         datePicker.clear();
+        datePicker.setInvalid(false);
         emailField.clear();
+        emailField.setInvalid(false);
         comboBoxStatus.clear();
-        multComboBox.clear();
+        comboBoxStatus.setInvalid(false);
+        comboBoxGroup.clear();
+        comboBoxGroup.setInvalid(false);
         passwordField.clear();
+        passwordField.setInvalid(false);
         passwordField.setEnabled(true);
         passwordField2.clear();
+        passwordField2.setInvalid(false);
         passwordField2.setEnabled(true);
         comboBoxRole.clear();
+        comboBoxRole.setInvalid(false);
     }
 
     private void cleanDialogFields() {

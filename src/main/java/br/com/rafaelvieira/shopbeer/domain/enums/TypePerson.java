@@ -7,14 +7,14 @@ import lombok.Getter;
 @Getter
 public enum TypePerson {
 
-	PHYSICAL_PERSON("Physical Person", "CPF", "000.000.000-00", CpfGroup.class) {
+	PHYSICAL_PERSON("Pessoa Física", "CPF", "000.000.000-00", CpfGroup.class) {
 		@Override
 		public String format(String cpfOrCnpj) {
 			return cpfOrCnpj.replaceAll("(\\d{3})(\\d{3})(\\d{3})", "$1.$2.$3-");
 		}
 	},
 
-	LEGAL_PERSON("Legal Person", "CNPJ", "00.000.000/0000-00", CnpjGroup.class) {
+	LEGAL_PERSON("Pessoa Jurídica", "CNPJ", "00.000.000/0000-00", CnpjGroup.class) {
 		@Override
 		public String format(String cpfOrCnpj) {
 			return cpfOrCnpj.replaceAll("(\\d{2})(\\d{3})(\\d{3})(\\d{4})", "$1.$2.$3/$4-");

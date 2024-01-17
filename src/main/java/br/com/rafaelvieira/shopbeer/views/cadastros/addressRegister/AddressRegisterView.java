@@ -1,4 +1,4 @@
-package br.com.rafaelvieira.shopbeer.views.cadastros.logradouroRegister;
+package br.com.rafaelvieira.shopbeer.views.cadastros.addressRegister;
 
 import br.com.rafaelvieira.shopbeer.views.MainLayout;
 import com.vaadin.flow.component.Composite;
@@ -23,9 +23,9 @@ import com.vaadin.flow.theme.lumo.LumoUtility.Gap;
 @Route(value = "logradouro-register", layout = MainLayout.class)
 @AnonymousAllowed
 @Uses(Icon.class)
-public class LogradouroRegisterView extends Composite<VerticalLayout> {
+public class AddressRegisterView extends Composite<VerticalLayout> {
 
-    public LogradouroRegisterView() {
+    public AddressRegisterView() {
         VerticalLayout layoutColumn2 = new VerticalLayout();
         H3 h3 = new H3();
         FormLayout formLayout2Col = new FormLayout();

@@ -1,12 +1,11 @@
 package br.com.rafaelvieira.shopbeer.domain;
 
-import java.io.Serial;
-import java.io.Serializable;
-
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Transient;
+import java.io.Serial;
+import java.io.Serializable;
 import lombok.Data;
 
 @Data
@@ -22,6 +21,7 @@ public class Address implements Serializable {
 	
 	private String complement;
 	
+	@JoinColumn(name = "zip_code")
 	private String zipCode;
 	
 	@ManyToOne
