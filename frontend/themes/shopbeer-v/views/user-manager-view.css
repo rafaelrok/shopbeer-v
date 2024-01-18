@@ -53,10 +53,9 @@ vaadin-button.user-manager-view-button-cancel {
 }
 
 vaadin-grid.user-manager-view-grid-striped::part(header-cell) {
-    background-color: var(--lumo-contrast-50pct);
+    background-color: #828e9c;
 }
 
 vaadin-grid.user-manager-view-grid-striped::part(footer-cell) {
-    background-color: var(--lumo-contrast-50pct);
-    --text-color: var(--lumo-primary-contrast-color);
+    background-color: #828e9c;
 }
