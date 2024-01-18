@@ -4,6 +4,9 @@
   "type": "module",
   "dependencies": {
     "@polymer/polymer": "3.5.1",
+    "@types/react": "^18.2.47",
+    "@types/react-dom": "^18.2.18",
+    "@types/react-router-dom": "^5.3.3",
     "@vaadin/a11y-base": "24.3.2",
     "@vaadin/accordion": "24.3.2",
     "@vaadin/app-layout": "24.3.2",
@@ -76,8 +79,12 @@
     "@vaadin/virtual-list": "24.3.2",
     "construct-style-sheets-polyfill": "3.1.0",
     "date-fns": "2.29.3",
+    "imask": "7.1.3",
     "lit": "3.1.0",
-    "proj4": "2.9.2"
+    "proj4": "2.9.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.21.1"
   },
   "devDependencies": {
     "@rollup/plugin-replace": "5.0.4",
@@ -172,6 +179,7 @@
       "@vaadin/virtual-list": "24.3.2",
       "construct-style-sheets-polyfill": "3.1.0",
       "date-fns": "2.29.3",
+      "imask": "7.1.3",
       "lit": "3.1.0",
       "proj4": "2.9.2"
     },
@@ -193,7 +201,7 @@
       "workbox-core": "7.0.0",
       "workbox-precaching": "7.0.0"
     },
-    "hash": "2ef1af9929cc99da6a2ac6f70fd10d1d61d6821d09c4f8606844de3f473f6a51"
+    "hash": "8324cd0042754bace18d9c35bd36f5d98d4a646fb04f38cc1b6bc080ea5aee5e"
   },
   "overrides": {
     "@vaadin/bundles": "$@vaadin/bundles",
@@ -270,6 +278,13 @@
     "@polymer/polymer": "$@polymer/polymer",
     "proj4": "$proj4",
     "@vaadin/vaadin-themable-mixin": "$@vaadin/vaadin-themable-mixin",
-    "date-fns": "$date-fns"
+    "date-fns": "$date-fns",
+    "@types/react": "$@types/react",
+    "@types/react-dom": "$@types/react-dom",
+    "@types/react-router-dom": "$@types/react-router-dom",
+    "react": "$react",
+    "react-dom": "$react-dom",
+    "react-router-dom": "$react-router-dom",
+    "imask": "$imask"
   }
 }

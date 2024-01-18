@@ -1,0 +1,62 @@
+vaadin-text-field.user-manager-view-text-field-1::part(input-field) {
+    --vaadin-input-field-placeholder-color: var(--lumo-contrast-40pct);
+}
+
+vaadin-text-field.user-manager-view-text-field-2::part(input-field) {
+    --vaadin-input-field-placeholder-color: var(--lumo-contrast-40pct);
+}
+
+vaadin-email-field.user-manager-view-email-field-1::part(input-field) {
+    --vaadin-input-field-placeholder-color: var(--lumo-contrast-40pct);
+}
+
+vaadin-date-picker.user-manager-view-date-picker::part(input-field) {
+    border-radius:5px;
+    border:1px solid var(--lumo-contrast-20pct);
+    --vaadin-input-field-placeholder-color: var(--lumo-contrast-30pct);
+}
+
+vaadin-combo-box.user-manager-view-combo-box-1::part(input-field) {
+    border-radius:5px;
+    border:1px solid var(--lumo-contrast-20pct);
+    --vaadin-input-field-placeholder-color: var(--lumo-contrast-30pct);
+}
+
+vaadin-combo-box.user-manager-view-combo-box-2::part(input-field) {
+    border-radius:5px;
+    border:1px solid var(--lumo-contrast-20pct);
+    --vaadin-input-field-placeholder-color: var(--lumo-contrast-30pct);
+}
+
+vaadin-combo-box.user-manager-view-multi-select-combo-box-1::part(input-field) {
+    border-radius:5px;
+    border:1px solid var(--lumo-contrast-20pct);
+    --vaadin-input-field-placeholder-color: var(--lumo-contrast-30pct);
+}
+
+vaadin-upload.user-manager-view-upload-1 {
+    border-radius:5px;
+    border:1px solid var(--lumo-contrast-20pct);
+}
+
+vaadin-password-field.user-manager-view-password-field-1::part(input-field) {
+    --vaadin-input-field-placeholder-color: var(--lumo-contrast-40pct);
+}
+
+vaadin-password-field.user-manager-view-password-field-2::part(input-field) {
+    --vaadin-input-field-placeholder-color: var(--lumo-contrast-40pct);
+}
+
+vaadin-button.user-manager-view-button-cancel {
+    border-radius:5px;
+    border:1px solid var(--lumo-contrast-30pct);
+}
+
+vaadin-grid.user-manager-view-grid-striped::part(header-cell) {
+    background-color: var(--lumo-contrast-50pct);
+}
+
+vaadin-grid.user-manager-view-grid-striped::part(footer-cell) {
+    background-color: var(--lumo-contrast-50pct);
+    --text-color: var(--lumo-primary-contrast-color);
+}

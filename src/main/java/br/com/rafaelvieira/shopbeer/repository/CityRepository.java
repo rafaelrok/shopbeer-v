@@ -14,6 +14,6 @@ public interface CityRepository extends JpaRepository<City, Long>, JpaSpecificat
     List<City> findByStateCode(Long codeState);
     Optional<City> findByAllIgnoreCase();
     Optional<City> findByNameAndState(String name, State state);
-
+    boolean existsByName(String name);
     Optional<City> findByName(String name);
 }

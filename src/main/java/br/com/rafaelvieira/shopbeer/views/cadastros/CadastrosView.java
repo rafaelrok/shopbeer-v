@@ -2,10 +2,11 @@ package br.com.rafaelvieira.shopbeer.views.cadastros;
 
 import br.com.rafaelvieira.shopbeer.repository.StateRepository;
 import br.com.rafaelvieira.shopbeer.services.CityService;
+import br.com.rafaelvieira.shopbeer.services.StyleService;
 import br.com.rafaelvieira.shopbeer.views.MainLayout;
 import br.com.rafaelvieira.shopbeer.views.cadastros.cityregister.CityRegisterView;
-import br.com.rafaelvieira.shopbeer.views.cadastros.logradouroRegister.LogradouroRegisterView;
-import br.com.rafaelvieira.shopbeer.views.cadastros.stateRegister.StateRegisterView;
+import br.com.rafaelvieira.shopbeer.views.cadastros.addressRegister.AddressRegisterView;
+import br.com.rafaelvieira.shopbeer.views.cadastros.styleRegister.StyleRegisterView;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.dependency.Uses;
 import com.vaadin.flow.component.html.H3;
@@ -27,14 +28,16 @@ public class CadastrosView extends Composite<VerticalLayout> {
     private final CityService cityService;
     private final StateRepository stateRepository;
 
+    private final StyleService styleService;
 
-    public CadastrosView(CityService cityService, StateRepository stateRepository) {
+
+    public CadastrosView(CityService cityService, StateRepository stateRepository, StyleService styleService) {
         this.cityService = cityService;
         this.stateRepository = stateRepository;
+        this.styleService = styleService;
 
         TabSheet tabs = new TabSheet ();
         H3 h3 = new H3();
-
 
         getContent().setWidth("100%");
         getContent().getStyle().set("flex-grow", "1");
@@ -45,12 +48,12 @@ public class CadastrosView extends Composite<VerticalLayout> {
 
     public void setTabsSampleData(TabSheet tabs) {
         CityRegisterView cityRegisterView = new CityRegisterView(cityService, stateRepository);
-        StateRegisterView stateRegisterView = new StateRegisterView();
-        LogradouroRegisterView logradouroRegisterView = new LogradouroRegisterView();
+        StyleRegisterView stateRegisterView = new StyleRegisterView(styleService);
+        AddressRegisterView addressRegisterView = new AddressRegisterView();
 
         tabs.addThemeVariants(TabSheetVariant.LUMO_TABS_CENTERED, TabSheetVariant.LUMO_BORDERED);
         tabs.add(new Tab(LineAwesomeIcon.CITY_SOLID.create(), new Span("Cidades")), cityRegisterView);
-        tabs.add(new Tab(LineAwesomeIcon.BUILDING_SOLID.create(), new Span("Estados")), stateRegisterView);
-        tabs.add(new Tab(LineAwesomeIcon.ROAD_SOLID.create(), new Span("Logradouros")), logradouroRegisterView);
+        tabs.add(new Tab(LineAwesomeIcon.BULLSEYE_SOLID.create(), new Span("Estilos")), stateRegisterView);
+        tabs.add(new Tab(LineAwesomeIcon.ROAD_SOLID.create(), new Span("Endereços")), addressRegisterView);
     }
 }

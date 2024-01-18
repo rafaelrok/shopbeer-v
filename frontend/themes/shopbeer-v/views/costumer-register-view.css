@@ -1,0 +1,112 @@
+vaadin-text-field.costumer-register-view-text-field-name::part(input-field) {
+    --vaadin-input-field-placeholder-color: var(--lumo-contrast-40pct);
+}
+
+vaadin-text-field.costumer-register-view-text-field-cpf-cnpj::part(input-field) {
+    --vaadin-input-field-placeholder-color: var(--lumo-contrast-40pct);
+}
+
+vaadin-text-field.costumer-register-view-text-field-phone::part(input-field) {
+    --vaadin-input-field-placeholder-color: var(--lumo-contrast-40pct);
+}
+
+vaadin-button.costumer-register-view-button-search-address {
+    border-radius:5px;
+    border:1px solid var(--lumo-contrast-30pct);
+}
+
+vaadin-button.costumer-register-view-state-button {
+    border-radius:5px;
+    border:1px solid var(--lumo-contrast-30pct);
+}
+
+vaadin-button.costumer-register-view-city-button {
+    border-radius:5px;
+    border:1px solid var(--lumo-contrast-30pct);
+}
+
+vaadin-text-field.costumer-register-view-text-field-street::part(input-field) {
+    --vaadin-input-field-placeholder-color: var(--lumo-contrast-40pct);
+}
+
+vaadin-text-field.costumer-register-view-text-field-complement::part(input-field) {
+    --vaadin-input-field-placeholder-color: var(--lumo-contrast-40pct);
+}
+
+vaadin-button.costumer-register-view-button-cancel {
+    border-radius:5px;
+    border:1px solid var(--lumo-contrast-30pct);
+}
+
+vaadin-combo-box.costumer-register-view-combo-box-person::part(input-field) {
+    border-radius:5px;
+    border:1px solid var(--lumo-contrast-20pct);
+    margin-left: var(--lumo-space-m);
+    --vaadin-input-field-placeholder-color: var(--lumo-contrast-40pct);
+}
+
+vaadin-combo-box.costumer-register-view-combo-box-person::part(label) {
+    margin-left: var(--lumo-space-m);
+}
+
+vaadin-combo-box.costumer-register-view-combo-box-state::part(input-field) {
+    border-radius:5px;
+    border:1px solid var(--lumo-contrast-20pct);
+    margin-left: var(--lumo-space-m);
+    --vaadin-input-field-placeholder-color: var(--lumo-contrast-40pct);
+}
+
+vaadin-combo-box.costumer-register-view-combo-box-state::part(label) {
+    margin-left: var(--lumo-space-m)
+}
+
+vaadin-combo-box.costumer-register-view-combo-box-city::part(input-field) {
+    border-radius:5px;
+    border:1px solid var(--lumo-contrast-20pct);
+    --vaadin-input-field-placeholder-color: var(--lumo-contrast-40pct);
+    margin-right: var(--lumo-space-m);
+}
+
+vaadin-combo-box.costumer-register-view-combo-box-city::part(label) {
+    margin-left: var(--lumo-space-m);
+}
+
+vaadin-combo-box.costumer-register-view-combo-box-country::part(input-field) {
+    border-radius:5px;
+    border:1px solid var(--lumo-contrast-20pct);
+    --vaadin-input-field-placeholder-color: var(--lumo-contrast-40pct);
+}
+
+vaadin-email-field.costumer-register-view-email-field-email::part(input-field) {
+    margin-left:var(--lumo-space-m);
+    --vaadin-input-field-placeholder-color: var(--lumo-contrast-40pct);
+}
+
+vaadin-email-field.costumer-register-view-email-field-email::part(label) {
+    margin-left:var(--lumo-space-m);
+}
+
+vaadin-text-field.costumer-register-view-text-field-zip-code::part(input-field) {
+    margin-left:var(--lumo-space-m);
+    --vaadin-input-field-placeholder-color: var(--lumo-contrast-40pct);
+}
+
+vaadin-text-field.costumer-register-view-text-field-zip-code::part(label) {
+    margin-left:var(--lumo-space-m);
+}
+
+vaadin-integer-field.costumer-register-view-integer-field-number::part(input-field) {
+    border: 1px solid var(--lumo-contrast-20pct);
+    border-radius: 5px;
+    margin-left:var(--lumo-space-m);
+    --vaadin-input-field-placeholder-color: var(--lumo-contrast-40pct);
+}
+
+vaadin-integer-field.costumer-register-view-integer-field-number::part(label) {
+    margin-left:var(--lumo-space-m);
+}
+
+vaadin-grid.costumer-register-view-grid-costumer::part(header-cell) {
+    /*background-color: var(--lumo-contrast-30pct);*/
+    font-weight: bold;
+}

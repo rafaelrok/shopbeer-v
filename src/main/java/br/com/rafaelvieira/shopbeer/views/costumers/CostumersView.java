@@ -49,33 +49,48 @@ public class CostumersView extends Composite<VerticalLayout> {
         Button buttonPrimary = new Button();
         Button buttonSecondary = new Button();
         Grid basicGrid = new Grid(Costumer.class);
+
         getContent().setWidth("100%");
         getContent().getStyle().set("flex-grow", "1");
         getContent().setJustifyContentMode(JustifyContentMode.START);
         getContent().setAlignItems(Alignment.CENTER);
+
         layoutColumn2.setWidth("100%");
         layoutColumn2.setMaxWidth("1200px");
         layoutColumn2.setHeight("min-content");
+
         h3.setText("Personal Information");
         h3.setWidth("100%");
+
         formLayout2Col.setWidth("100%");
+
         textField.setLabel("First Name");
+
         textField2.setLabel("Last Name");
+
         datePicker.setLabel("Birthday");
+
         textField3.setLabel("Phone Number");
+
         emailField.setLabel("Email");
+
         textField4.setLabel("Occupation");
+
         layoutRow.addClassName(Gap.MEDIUM);
         layoutRow.setWidth("100%");
         layoutRow.getStyle().set("flex-grow", "1");
+
         buttonPrimary.setText("Save");
         buttonPrimary.setWidth("min-content");
         buttonPrimary.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
         buttonSecondary.setText("Cancel");
         buttonSecondary.setWidth("min-content");
+
         basicGrid.setWidth("100%");
         basicGrid.getStyle().set("flex-grow", "0");
         setGridSampleData(basicGrid);
+
         getContent().add(layoutColumn2);
         layoutColumn2.add(h3);
         layoutColumn2.add(formLayout2Col);

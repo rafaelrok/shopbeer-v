@@ -11,6 +11,6 @@ import java.util.Optional;
 public interface StateRepository extends JpaRepository<State, Long>, JpaSpecificationExecutor<State> {
 
     Optional<State> findByCode(Long code);
-
+    boolean existsByName(String name);
     Optional<State> findByName(String name);
 }

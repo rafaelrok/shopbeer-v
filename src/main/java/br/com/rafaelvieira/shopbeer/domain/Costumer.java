@@ -55,7 +55,8 @@ public class Costumer implements Serializable {
 	@Embedded
 	private Address address;
 	
-	@PrePersist @PreUpdate
+	@PrePersist
+	@PreUpdate
 	private void prePersistPreUpdate() {
 		this.cpfcnpj = TypePerson.removeFormatting(this.cpfcnpj);
 	}
@@ -64,9 +65,13 @@ public class Costumer implements Serializable {
 	private void postLoad() {
 		this.cpfcnpj = this.typePerson.format(this.cpfcnpj);
 	}
-	
+
 	public String getCpfOrCnpjNoFormatting() {
 		return TypePerson.removeFormatting(this.cpfcnpj);
+	}
+
+	public boolean isNew() {
+		return code == null;
 	}
 
 	@Override

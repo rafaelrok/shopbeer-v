@@ -1,0 +1,33 @@
+vaadin-text-field.city-register-view-text-field::part(input-field) {
+    --vaadin-input-field-placeholder-color: var(--lumo-contrast-40pct);
+}
+
+vaadin-combo-box.city-register-view-state-combobox::part(input-field) {
+    border: 1px solid var(--lumo-contrast-30pct);
+    --vaadin-input-field-placeholder-color: var(--lumo-contrast-40pct);
+}
+
+vaadin-button.city-register-view-state-button {
+    border-radius:5px;
+    border:1px solid var(--lumo-contrast-30pct);
+    color: var(--lumo-success-color-50pct);
+    margin-right: var(--lumo-space-m) !important;
+    transition: color 0.2s;
+    animation-duration: 0.2s;
+}
+
+vaadin-button.city-register-view-state-button::part(overlay) {
+    background-color: var(--lumo-contrast-5pct);
+}
+
+vaadin-combo-box.city-register-view-country-combobox::part(input-field) {
+    border: 1px solid var(--lumo-contrast-30pct);
+    --vaadin-input-field-placeholder-color: var(--lumo-contrast-40pct);
+}
+
+vaadin-button.city-register-view-button-secondary {
+    border-radius:5px;
+    border:1px solid var(--lumo-contrast-30pct);
+    transition: color 0.2s;
+    animation-duration: 0.2s;
+}
