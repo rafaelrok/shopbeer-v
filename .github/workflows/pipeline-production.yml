@@ -78,6 +78,9 @@ jobs:
         ## alternative-test
 #        run: mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar -Dsonar.projectKey=rafaelrok_shopbeer -Dsonar.organization=rafaelrok-github -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
+      # testes de código
+#      - name: Test with Maven
+#        run: mvn clean test
 
       #Build maven.
       - name: Publish to GitHub Packages Apache Maven
