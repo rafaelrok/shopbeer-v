@@ -87,6 +87,7 @@ public class CityRegisterView extends Composite<VerticalLayout> {
         this.cityService = cityService;
         this.stateRepository = stateRepository;
 
+        //<theme-editor-local-classname>
         comboBoxCountry.addClassName("city-register-view-country-combobox");
         comboBoxState.addClassName("city-register-view-state-combobox");
         textField.addClassName("city-register-view-text-field");
@@ -117,10 +118,9 @@ public class CityRegisterView extends Composite<VerticalLayout> {
         formLayout2Col.setWidth("100%");
         formLayout2Col.getStyle().setBorder("1px solid var(--lumo-contrast-30pct)");
         formLayout2Col.getStyle().setBorderRadius("5px");
-        formLayout2Col.getStyle().set("padding-left", "20px");
-        formLayout2Col.getStyle().set("padding-top", "10px");
-        formLayout2Col.getStyle().set("padding-right", "0");
-        formLayout2Col.getStyle().set("padding-bottom", "20px");
+        formLayout2Col.getStyle().setPaddingLeft("20px");
+        formLayout2Col.getStyle().setPaddingTop("10px");
+        formLayout2Col.getStyle().setPaddingBottom("20px");
         formLayout2Col.setResponsiveSteps(
                 new FormLayout.ResponsiveStep("0", 1),
                 new FormLayout.ResponsiveStep("700px", 2),
@@ -134,6 +134,7 @@ public class CityRegisterView extends Composite<VerticalLayout> {
         textField.setClearButtonVisible(true);
         textField.setPlaceholder("Digite o nome da cidade");
         textField.setRequired(true);
+        textField.setErrorMessage("Nome da cidade é obrigatório!");
         textField.setPrefixComponent(LineAwesomeIcon.CITY_SOLID.create());
 
         comboBoxState.setLabel("Estado");
@@ -142,6 +143,7 @@ public class CityRegisterView extends Composite<VerticalLayout> {
         comboBoxState.setClearButtonVisible(true);
         comboBoxState.setPlaceholder("Localizar estado");
         comboBoxState.setRequired(true);
+        comboBoxState.setErrorMessage("Estado é obrigatório!");
         comboBoxState.setPrefixComponent(LineAwesomeIcon.BUILDING_SOLID.create());
         setComboBoxState(comboBoxState);
 
@@ -162,6 +164,7 @@ public class CityRegisterView extends Composite<VerticalLayout> {
         comboBoxCountry.setClearButtonVisible(true);
         comboBoxCountry.setPlaceholder("Selecione um país");
         comboBoxCountry.setRequired(true);
+        comboBoxCountry.setErrorMessage("País é obrigatório!");
         comboBoxCountry.setPrefixComponent(LineAwesomeIcon.GLOBE_SOLID.create());
         comboBoxCountry.addClassName("country-combobox");
         setComboBoxCountry(comboBoxCountry);
@@ -193,7 +196,6 @@ public class CityRegisterView extends Composite<VerticalLayout> {
             stripedGrid.getStyle().setBackgroundColor("var(--lumo-contrast-5pct)");
             stripedGrid.getStyle().set("border", "1px solid var(--lumo-contrast-40pct)");
             stripedGrid.getStyle().set("border-radius", "5px");
-//            stripedGrid.getStyle().set("padding", "10px");
             stripedGrid.getHeaderRows().stream()
                     .flatMap(row -> row.getCells().stream())
                     .forEach(cell -> cell.getComponent().getElement().getStyle().set("font-weight", "600"));
@@ -202,13 +204,13 @@ public class CityRegisterView extends Composite<VerticalLayout> {
                         Div divCode = new Div();
                         divCode.setText(String.valueOf(city.getCode()));
                         divCode.getStyle().set("display", "flex");
-                        divCode.getStyle().set("justify-content", "start");
-                        divCode.getStyle().set("align-items", "start");
+                        divCode.getStyle().set("justify-content", "center");
+                        divCode.getStyle().set("align-items", "center");
                         return divCode;
-                    })).setHeader(new Html("<div style='text-align:center;'>Código</div>"))
-                    .setWidth("95px")
-                    .setFooter(String.format("%d Total", cities.size()))
-                    .setSortOrderProvider(
+                    })).setHeader(new Html("<div style='text-align:center; color:white'>CÓDIGO</div>"))
+                        .setWidth("95px")
+                        .setFooter(new Html("<div style='color:white'>" + String.format("Total Cidades: %d", cities.size()) + "</div>"))
+                        .setSortOrderProvider(
                             direction -> (Stream<QuerySortOrder>) dataViewCity
                                     .setSortOrder(City::getCode, direction));
 
@@ -216,17 +218,17 @@ public class CityRegisterView extends Composite<VerticalLayout> {
                         Div divCode = new Div();
                         divCode.setText(String.valueOf(city.getName()));
                         divCode.getStyle().set("display", "flex");
-                        divCode.getStyle().set("justify-content", "start");
-                        divCode.getStyle().set("align-items", "start");
+                        divCode.getStyle().set("justify-content", "center");
+                        divCode.getStyle().set("align-items", "center");
                         return divCode;
-                    })).setHeader(new Html("<div style='text-align:center;'>Nome</div>"))
+                    })).setHeader(new Html("<div style='text-align:center; color:white'>NOME</div>"))
                     .setSortOrderProvider(
                             direction -> (Stream<QuerySortOrder>) dataViewCity
                                     .setSortOrder(City::getName, direction))
                     .setWidth("250px");
 
         stripedGrid.addColumn(createStateRenderer())
-                .setHeader(new Html("<div style='text-align:center;'>Estado</div>"))
+                .setHeader(new Html("<div style='text-align:center; color:white'>ESTADO</div>"))
                 .setSortOrderProvider(
                         direction -> (Stream<QuerySortOrder>) dataViewCity
                                 .setSortOrder(city -> city.getState().getName(), direction))
@@ -242,12 +244,12 @@ public class CityRegisterView extends Composite<VerticalLayout> {
                     divCode.getStyle().set("border-radius", "5px");
                     divCode.getStyle().set("padding", "0.1em 0.1em");
                     return divCode;
-                })).setHeader(new Html("<div style='text-align:center;'>Pais</div>"))
+                })).setHeader(new Html("<div style='text-align:center; color:white'>PAIS</div>"))
                 .setWidth("100px");
 
             stripedGrid.addColumn(
                             new ComponentRenderer<>(this::actionManager))
-                    .setHeader(new Html("<div style='text-align:center;'>Ações</div>"))
+                    .setHeader(new Html("<div style='text-align:center; color:white'>AÇÕES</div>"))
                     .setWidth("80px").setFlexGrow(0)
                     .setAutoWidth(true);
 
