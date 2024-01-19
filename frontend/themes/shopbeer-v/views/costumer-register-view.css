@@ -107,6 +107,9 @@ vaadin-integer-field.costumer-register-view-integer-field-number::part(label) {
 }
 
 vaadin-grid.costumer-register-view-grid-costumer::part(header-cell) {
-    /*background-color: var(--lumo-contrast-30pct);*/
-    font-weight: bold;
+    background-color: #828e9c;
+}
+
+vaadin-grid.costumer-register-view-grid-costumer::part(footer-cell) {
+    background-color: #828e9c;
 }

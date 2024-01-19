@@ -425,12 +425,12 @@ public class CostumerRegisterView extends Composite<VerticalLayout> {
                     divCode.getStyle().set("display", "flex");
                     divCode.getStyle().set("justify-content", "center");
                     divCode.getStyle().set("align-items", "center");
-                    divCode.getStyle().set("width", "30px");
+                    divCode.getStyle().set("width", "40px");
                     return divCode;
-                })).setHeader(new Html("<div style='text-align:center; width: 50px;'>Código</div>"))
+                })).setHeader(new Html("<div style='text-align:center; width: 55px; color:white'>CÓDIGO</div>"))
                 .setAutoWidth(true).setFlexGrow(0)
                 .setSortable(true).setKey("code")
-                .setFooter(String.format("Total Clientes: %d", costumers.size()));
+                .setFooter(new Html("<div style='color:white'>" + String.format("Total Clientes: %d", costumers.size()) + "</div>"));
 
         costumerGrid.addColumn(new ComponentRenderer<>( costumer -> {
                     Div divType = new Div();
@@ -441,25 +441,25 @@ public class CostumerRegisterView extends Composite<VerticalLayout> {
                     divType.getStyle().set("width", "80px");
                     return divType;
                 }))
-                .setHeader(new Html("<div style='text-align:start; width: 70px;'>Pessoa</div>"))
+                .setHeader(new Html("<div style='text-align:start; width: 70px; color:white'>PESSOA</div>"))
                 .setAutoWidth(true).setFlexGrow(0);
 
         costumerGrid.addColumn(createCostumerInfoRenderer())
-                .setHeader(new Html("<div style='text-align:start; width: 200px;'>Dados Pessoais</div>"))
+                .setHeader(new Html("<div style='text-align:start; width: 200px; color:white'>INFO PESSOAL</div>"))
                 .setSortOrderProvider(
                         direction -> (Stream<QuerySortOrder>) dataView
                                 .setSortOrder(Costumer::getName, direction))
                 .setAutoWidth(true).setFlexGrow(0);
 
         costumerGrid.addColumn(createCostumerAddressRenderer())
-                .setHeader(new Html("<div style='text-align:start; width: 170px;'>Endereço</div>"))
+                .setHeader(new Html("<div style='text-align:start; width: 170px; color:white'>ENDEREÇO</div>"))
                 .setSortOrderProvider(
                         direction -> (Stream<QuerySortOrder>) dataView
                                 .setSortOrder(c -> c.getAddress().getStreet(), direction))
                 .setAutoWidth(true).setFlexGrow(0);
 
         costumerGrid.addColumn(createStateRenderer())
-                .setHeader(new Html("<div style='text-align:center; width: 100px;'>Cidade/Estado</div>"))
+                .setHeader(new Html("<div style='text-align:center; width: 100px; color:white'>CIDADE/UF</div>"))
                 .setSortOrderProvider(
                         direction -> (Stream<QuerySortOrder>) dataView
                                 .setSortOrder(c -> c.getAddress().getState().getName(), direction))
@@ -467,7 +467,7 @@ public class CostumerRegisterView extends Composite<VerticalLayout> {
 
         costumerGrid.addColumn(
                         new ComponentRenderer<>(this::actionManager))
-                .setHeader(new Html("<div style='text-align:center; width: 50px;'>Ações</div>"));
+                .setHeader(new Html("<div style='text-align:center; width: 50px; color:white'>AÇÕES</div>"));
 
         costumerGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
         setGridSampleData(costumerGrid);

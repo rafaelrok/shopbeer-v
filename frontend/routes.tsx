@@ -1,5 +1,7 @@
 import { createBrowserRouter, RouteObject } from 'react-router-dom';
-import {serverSideRoutes} from "Frontend/generated/flow/Flow";
+// @ts-ignore
+import {serverSideRoutes} from "./Flow";
+// import {serverSideRoutes} from "Frontend/generated/flow/Flow";
 
 export const routes = [
   ...serverSideRoutes
