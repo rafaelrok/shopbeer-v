@@ -31,3 +31,11 @@ vaadin-button.city-register-view-button-secondary {
     transition: color 0.2s;
     animation-duration: 0.2s;
 }
+
+vaadin-grid.city-register-view-grid::part(header-cell) {
+    background-color: #828e9c;
+}
+
+vaadin-grid.city-register-view-grid::part(footer-cell) {
+    background-color: #828e9c;
+}
