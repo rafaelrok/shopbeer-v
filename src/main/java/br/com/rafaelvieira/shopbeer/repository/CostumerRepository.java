@@ -15,5 +15,8 @@ public interface CostumerRepository extends JpaRepository<Costumer, Long>, JpaSp
     boolean existsByCpfcnpj(String cpfcnpj);
 
     Optional<Costumer> findByNameStartingWithIgnoreCase(String name);
+    
+    Optional<Costumer> findByEmail(String email);
+    
 
 }

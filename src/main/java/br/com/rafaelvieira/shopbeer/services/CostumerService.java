@@ -34,6 +34,10 @@ public class CostumerService {
         return costumerRepository.findByCpfcnpj(cpfcnpj);
     }
 
+    public Optional<Costumer> findByEmail(String email) {
+        return costumerRepository.findByEmail(email);
+    }
+    
     public Optional<Costumer> findByName(String name) {
         return costumerRepository.findByNameStartingWithIgnoreCase(name);
     }

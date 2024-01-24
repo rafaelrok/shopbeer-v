@@ -72,6 +72,10 @@ public class UserEmployeeService {
         return userEmployeeRepository.findByUsername(username);
     }
 
+    public Optional<UserEmployee> findByUsernameIgnoreCase(String username) {
+        return userEmployeeRepository.findByUsernameIgnoreCase(username);
+    }
+
     public Optional<UserEmployee> findByEmail(String email) {
         return userEmployeeRepository.findByEmail(email);
     }

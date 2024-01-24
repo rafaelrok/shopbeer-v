@@ -86,12 +86,20 @@ vaadin-email-field.costumer-register-view-email-field-email::part(label) {
     margin-left:var(--lumo-space-m);
 }
 
+vaadin-email-field.costumer-register-view-email-field-email::part(error-message) {
+    margin-left:var(--lumo-space-m);
+}
+
 vaadin-text-field.costumer-register-view-text-field-zip-code::part(input-field) {
     margin-left:var(--lumo-space-m);
     --vaadin-input-field-placeholder-color: var(--lumo-contrast-40pct);
 }
 
 vaadin-text-field.costumer-register-view-text-field-zip-code::part(label) {
+    margin-left:var(--lumo-space-m);
+}
+
+vaadin-text-field.costumer-register-view-text-field-zip-code::part(error-message) {
     margin-left:var(--lumo-space-m);
 }
 
