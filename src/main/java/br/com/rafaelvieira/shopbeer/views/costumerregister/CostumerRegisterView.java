@@ -3,6 +3,7 @@ package br.com.rafaelvieira.shopbeer.views.costumerregister;
 import br.com.rafaelvieira.shopbeer.domain.*;
 import br.com.rafaelvieira.shopbeer.domain.enums.Countries;
 import br.com.rafaelvieira.shopbeer.domain.enums.TypePerson;
+import br.com.rafaelvieira.shopbeer.repository.CostumerRepository;
 import br.com.rafaelvieira.shopbeer.repository.StateRepository;
 import br.com.rafaelvieira.shopbeer.security.UserPermissionChecker;
 import br.com.rafaelvieira.shopbeer.services.CityService;
@@ -35,6 +36,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.provider.QuerySortOrder;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.LitRenderer;
@@ -67,6 +69,9 @@ public class CostumerRegisterView extends Composite<VerticalLayout> {
 
     @Autowired()
     private static CostumerService costumerService;
+
+    @Autowired()
+    private static CostumerRepository costumerRepository;
 
     @Autowired()
     private static CityService cityService;
@@ -117,9 +122,14 @@ public class CostumerRegisterView extends Composite<VerticalLayout> {
     TextField textDialogStateName = new TextField();
     TextField textDialogStateAcronym = new TextField();
     ComboBox comboBoxCountry = new ComboBox();
+    Binder<Costumer> binder = new Binder<>();
 
-    public CostumerRegisterView(CostumerService costumerService, CityService cityService, StateRepository stateRepository) {
+    public CostumerRegisterView(CostumerService costumerService,
+                                CostumerRepository costumerRepository,
+                                CityService cityService,
+                                StateRepository stateRepository) {
         this.costumerService = costumerService;
+        this.costumerRepository = costumerRepository;
         this.cityService = cityService;
         this.stateRepository = stateRepository;
         addClassName("costumer-register-view");
@@ -146,10 +156,13 @@ public class CostumerRegisterView extends Composite<VerticalLayout> {
         stateButton.addClassName("costumer-register-view-state-button");
         cityButton.addClassName("costumer-register-view-city-button");
         comboBoxCountry.setOverlayClassName("costumer-register-view-combo-box-country");
+        formLayout2Col.addClassName("costumer-register-view-form-layout-1-col");
+        formLayout2Col2.addClassName("costumer-register-view-form-layout-2-col");
 
         getContent().setWidth("100%");
-        getContent().getStyle().set("flex", "1");
+        getContent().getStyle().set("flex-grow", "1");
         getContent().setJustifyContentMode(JustifyContentMode.START);
+        getContent().setAlignItems(FlexComponent.Alignment.CENTER);
 
         h3PersonalData.setText("Dados pessoais");
         h3PersonalData.setWidth("100%");
@@ -165,33 +178,28 @@ public class CostumerRegisterView extends Composite<VerticalLayout> {
         spanAddress.setWidth("100%");
         spanAddress.setText("Preencha os dados de endereço do cliente");
 
-        layoutRow.addClassName(LumoUtility.Gap.MEDIUM);
+        layoutRow.addClassName(LumoUtility.Gap.SMALL);
         layoutRow.setWidth("100%");
-        layoutRow.getStyle().set("flex", "1");
-        layoutRow.setSpacing(true);
-        layoutRow.setMargin(true);
-        layoutRow.setAlignItems(FlexComponent.Alignment.CENTER);
+        layoutRow.getStyle().set("flex-grow", "1");
 
-        layoutRow2.addClassName(LumoUtility.Gap.MEDIUM);
+        layoutRow2.addClassName(LumoUtility.Gap.SMALL);
         layoutRow2.setWidth("100%");
-        layoutRow2.getStyle().set("flex", "1");
-        layoutRow2.setSpacing(true);
-        layoutRow2.setMargin(true);
-        layoutRow2.setAlignItems(FlexComponent.Alignment.CENTER);
+        layoutRow2.getStyle().set("flex-grow", "1");
 
         /*
          * Layout reponsavel pelo cadastro de dados pessoais
          */
         layoutColumn.setWidth("100%");
         layoutColumn.setMaxWidth("1190px");
-        layoutColumn.getStyle().set("flex-grow", "1");
+        layoutColumn.getStyle().set("flex", "1");
 
-        formLayout2Col.setWidth("100%");
+        formLayout2Col.setWidth("auto");
         formLayout2Col.getStyle().setBorder("1px solid var(--lumo-contrast-30pct)");
         formLayout2Col.getStyle().setBorderRadius("5px");
-        formLayout2Col.getStyle().set("padding", "10px");
+        formLayout2Col.getStyle().setPaddingLeft("20px");
+        formLayout2Col.getStyle().setPaddingTop("10px");
+        formLayout2Col.getStyle().setPaddingBottom("20px");
         formLayout2Col.getStyle().set("spacing", "true");
-
         formLayout2Col.setResponsiveSteps(
                 new FormLayout.ResponsiveStep("300px", 1),
                 new FormLayout.ResponsiveStep("600px", 2),
@@ -242,14 +250,17 @@ public class CostumerRegisterView extends Composite<VerticalLayout> {
         textFieldName.setPlaceholder("Digite o nome completo");
         textFieldName.setPrefixComponent(LineAwesomeIcon.USER_SOLID.create());
         textFieldName.setClearButtonVisible(true);
-
+        
         textFieldCpfCnpj.setLabel("CPF/CNPJ");
         textFieldCpfCnpj.setWidth("100%");
         textFieldCpfCnpj.setMaxWidth("200px");
         textFieldCpfCnpj.setRequired(true);
+        textFieldCpfCnpj.setErrorMessage("CPF ou CNPJ inválido");
         textFieldCpfCnpj.setClearButtonVisible(true);
         textFieldCpfCnpj.setPlaceholder("CPF ou CNPJ");
         textFieldCpfCnpj.setPrefixComponent(LineAwesomeIcon.ID_CARD_SOLID.create());
+        textFieldCpfCnpj.setValueChangeMode(ValueChangeMode.ON_BLUR);
+        setValidCpfCnpj(textFieldCpfCnpj);
 
         textFieldPhone.setLabel("Celular");
         textFieldPhone.getStyle().set("flex-grow", "1");
@@ -269,6 +280,8 @@ public class CostumerRegisterView extends Composite<VerticalLayout> {
         emailField.setPattern("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$");
         emailField.setErrorMessage("Por favor, digite um e-mail válido");
         emailField.setPrefixComponent(LineAwesomeIcon.ENVELOPE_SOLID.create());
+        emailField.setValueChangeMode(ValueChangeMode.ON_BLUR);
+        setValidEmail(emailField);
 
         /*
         * Layout reponsavel pelo cadastro de endereços
@@ -277,10 +290,12 @@ public class CostumerRegisterView extends Composite<VerticalLayout> {
         layoutColumn2.getStyle().set("flex", "1");
         layoutColumn2.setMaxWidth("1190px");
 
-        formLayout2Col2.setWidth("100%");
+        formLayout2Col2.setWidth("auto");
         formLayout2Col2.getStyle().setBorder("1px solid var(--lumo-contrast-30pct)");
         formLayout2Col2.getStyle().setBorderRadius("5px");
-        formLayout2Col2.getStyle().set("padding", "10px");
+        formLayout2Col2.getStyle().setPaddingLeft("20px");
+        formLayout2Col2.getStyle().setPaddingTop("10px");
+        formLayout2Col2.getStyle().setPaddingBottom("20px");
         formLayout2Col2.setResponsiveSteps(
                 new FormLayout.ResponsiveStep("0", 1),
                 new FormLayout.ResponsiveStep("700px", 2),
@@ -509,17 +524,45 @@ public class CostumerRegisterView extends Composite<VerticalLayout> {
         return value.toLowerCase().contains(searchTerm.toLowerCase());
     }
 
+    public void setValidCpfCnpj(TextField textField) {
+        textField.addValueChangeListener(event ->  {
+            Costumer costumer = new Costumer();
+            costumer.setCpfcnpj(textField.getValue());
+            Optional<Costumer> existingCostumer = costumerRepository.findByCpfcnpj(costumer.getCpfOrCnpjNoFormatting());
+            if (existingCostumer.isPresent() && !existingCostumer.get().equals(costumer)) {
+                textFieldCpfCnpj.setInvalid(true);
+                textFieldCpfCnpj.setErrorMessage("CPF/CNPJ já cadastrado");
+            } else {
+                textFieldCpfCnpj.setInvalid(false);
+            }
+        });
+    }
+
+    public void setValidEmail(EmailField emailField) {
+        emailField.addValueChangeListener(event ->  {
+            Costumer costumer = new Costumer();
+            costumer.setEmail(emailField.getValue());
+            Optional<Costumer> existingCostumer = costumerRepository.findByEmail(costumer.getEmail());
+            if (existingCostumer.isPresent() && !existingCostumer.get().equals(costumer)) {
+                emailField.setInvalid(true);
+                emailField.setErrorMessage("Este email já foi cadastrado");
+            } else {
+                emailField.setInvalid(false);
+            }
+        });
+    }
+
     private static Renderer<Costumer> createCostumerInfoRenderer() {
         return LitRenderer.<Costumer> of(
                         "<vaadin-horizontal-layout style=\"align-items: center;\" theme=\"spacing\">"
                                 + "  <vaadin-vertical-layout style=\"line-height: var(--lumo-line-height-m);\">"
                                 + "    <span> ${item.fullName} </span>"
                                 + "    <span style=\"font-size: var(--lumo-font-size-s); color: var(--lumo-secondary-text-color);\">"
-                                + "      ${item.email}" + "    </span>"
+                                + "     E-mail: ${item.email}" + "    </span>"
                                 + "    <span style=\"font-size: var(--lumo-font-size-s); color: var(--lumo-secondary-text-color);\">"
-                                + "      ${item.phone}" + "    </span>"
+                                + "     Contato: ${item.phone}" + "    </span>"
                                 + "    <span style=\"font-size: var(--lumo-font-size-s); color: var(--lumo-secondary-text-color);\">"
-                                + "      ${item.cpfCnpj}" + "    </span>"
+                                + "     Registro: ${item.cpfCnpj}" + "    </span>"
                                 + "  </vaadin-vertical-layout>"
                                 + "</vaadin-horizontal-layout>")
                 .withProperty("fullName", Costumer::getName)
@@ -534,9 +577,9 @@ public class CostumerRegisterView extends Composite<VerticalLayout> {
                                 + "  <vaadin-vertical-layout style=\"line-height: var(--lumo-line-height-m);\">"
                                 + "    <span> ${item.street} - ${item.number} </span>"
                                 + "    <span style=\"font-size: var(--lumo-font-size-s); color: var(--lumo-secondary-text-color);\">"
-                                + "      ${item.complement}" + "    </span>"
+                                + "      Obs: ${item.complement}" + "    </span>"
                                 + "    <span style=\"font-size: var(--lumo-font-size-s); color: var(--lumo-secondary-text-color);\">"
-                                + "      ${item.zipCode}" + "    </span>"
+                                + "      CEP: ${item.zipCode}" + "    </span>"
                                 + "  </vaadin-vertical-layout>"
                                 + "</vaadin-horizontal-layout>")
                 .withProperty("street", c -> c.getAddress().getStreet())
@@ -784,22 +827,13 @@ public class CostumerRegisterView extends Composite<VerticalLayout> {
     }
 
     private void saveCostumer() {
-        Optional<Costumer> optionalCostumer = costumerService.findByCpfcnpj(textFieldCpfCnpj.getValue());
-        Optional<State> optionalState = stateRepository.findById(((State) comboBoxState.getValue()).getCode());
+        Costumer costumer = costumerService.findByCpfcnpj(textFieldCpfCnpj.getValue()).orElse(new Costumer());
+        State state = stateRepository.findById(((State) comboBoxState.getValue()).getCode()).orElse(new State());
 
-        if (optionalCostumer.isPresent() && optionalState.isPresent()) {
-            Costumer costumer = optionalCostumer.get();
-            State state = optionalState.get();
-
-            if (costumer.isNew()) {
-                createCostumer(costumer, state);
-            } else {
-                updateCostumer(costumer, state);
-            }
+        if (costumer.isNew()) {
+            createCostumer(costumer, state);
         } else {
-            Notification notification = Notification.show("Cliente ou Estado não encontrado!", 6000,
-                    Notification.Position.TOP_CENTER);
-            notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+            updateCostumer(costumer, state);
         }
     }
 
@@ -836,20 +870,27 @@ public class CostumerRegisterView extends Composite<VerticalLayout> {
     private void fillCostumerData(Costumer costumer) {
         costumer.setName(textFieldName.getValue());
 
-        String currentCpfCnpj = textFieldCpfCnpj.getValue();
-        String existingCpfCnpj = costumerService.get(costumer.getCode()).orElseThrow().getCpfcnpj();
-        if(!currentCpfCnpj.isEmpty()){
-            if(!currentCpfCnpj.equals(existingCpfCnpj)){
-                costumer.setCpfcnpj(currentCpfCnpj);
-            }
-        }
+        if (!costumer.isNew()) {
+            String currentCpfCnpj = textFieldCpfCnpj.getValue();
+            Costumer existingCostumer = costumerService.get(costumer.getCode()).orElseThrow();
+            String existingCpfCnpj = existingCostumer.getCpfcnpj();
 
-        String currentEmail = emailField.getValue();
-        String existingEmail = costumerService.get(costumer.getCode()).orElseThrow().getEmail();
-        if(!currentEmail.isEmpty()){
-            if(!currentEmail.equals(existingEmail)){
-                costumer.setEmail(currentEmail);
+            if(!currentCpfCnpj.isEmpty()){
+                if(!currentCpfCnpj.equals(existingCpfCnpj)){
+                    costumer.setCpfcnpj(currentCpfCnpj);
+                }
             }
+
+            String currentEmail = emailField.getValue();
+            String existingEmail = existingCostumer.getEmail();
+            if(!currentEmail.isEmpty()){
+                if(!currentEmail.equals(existingEmail)){
+                    costumer.setEmail(currentEmail);
+                }
+            }
+        } else {
+            costumer.setCpfcnpj(textFieldCpfCnpj.getValue());
+            costumer.setEmail(emailField.getValue());
         }
 
         TypePerson typePerson = (TypePerson) comboBoxPerson.getValue();
@@ -940,9 +981,12 @@ public class CostumerRegisterView extends Composite<VerticalLayout> {
             confirmButton.addClickListener(event -> {
                 textFieldName.setValue(costumerEdit.getName());
                 textFieldCpfCnpj.setValue(costumerEdit.getCpfcnpj());
+                textFieldCpfCnpj.setReadOnly(true);
+                textFieldCpfCnpj.setInvalid(false);
                 textFieldPhone.setValue(costumerEdit.getTelephone());
                 comboBoxPerson.setValue(costumerEdit.getTypePerson());
                 emailField.setValue(costumerEdit.getEmail());
+                emailField.setInvalid(false);
                 textFieldStreet.setValue(costumerEdit.getAddress().getStreet());
                 numberField.setValue(Integer.valueOf(costumerEdit.getAddress().getNumber()));
                 textFieldComplement.setValue(costumerEdit.getAddress().getComplement());

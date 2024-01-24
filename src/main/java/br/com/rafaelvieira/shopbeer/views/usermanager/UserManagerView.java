@@ -187,6 +187,8 @@ public class UserManagerView extends Composite<VerticalLayout> {
         emailField.setPattern("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$");
         emailField.setErrorMessage("Por favor, digite um e-mail válido");
         emailField.setPrefixComponent(VaadinIcon.ENVELOPE_O.create());
+        emailField.setValueChangeMode(ValueChangeMode.ON_BLUR);
+        setValidEmail(emailField);
 
         comboBoxRole.setLabel("Perfil");
         comboBoxRole.setWidth("100%");
@@ -274,6 +276,8 @@ public class UserManagerView extends Composite<VerticalLayout> {
         textUsername.setRequiredIndicatorVisible(true);
         textUsername.setErrorMessage("Por favor, digite o nome de usuário");
         textUsername.setPrefixComponent(VaadinIcon.USER.create());
+        textUsername.setValueChangeMode(ValueChangeMode.ON_BLUR);
+        setValidUserName(textUsername);
 
         upload.setAutoUpload(false);
         upload.setWidth("100%");
@@ -439,6 +443,34 @@ public class UserManagerView extends Composite<VerticalLayout> {
         getContent().add(stripedGrid);
     }
 
+    public void setValidEmail(EmailField emailField) {
+        emailField.addValueChangeListener(event ->  {
+            UserEmployee userEmployee = new UserEmployee();
+            userEmployee.setEmail(emailField.getValue());
+            Optional<UserEmployee> existingUser = userEmployeeService.findByEmail(userEmployee.getEmail());
+            if (existingUser.isPresent() && !existingUser.get().equals(userEmployee)) {
+                emailField.setInvalid(true);
+                emailField.setErrorMessage("Este email já foi cadastrado");
+            } else {
+                emailField.setInvalid(false);
+            }
+        });
+    }
+
+    public void setValidUserName(TextField textUsername) {
+        textUsername.addValueChangeListener(event ->  {
+            UserEmployee userEmployee = new UserEmployee();
+            userEmployee.setUsername(textUsername.getValue());
+            Optional<UserEmployee> existingUser = userEmployeeService.findByUsernameIgnoreCase(userEmployee.getUsername());
+            if (existingUser.isPresent() && !existingUser.get().equals(userEmployee)) {
+                textUsername.setInvalid(true);
+                textUsername.setErrorMessage("Nome de usuário já esta cadastrado");
+            } else {
+                textUsername.setInvalid(false);
+            }
+        });
+    }
+
     public void setComboBoxStatusUserEmployee(ComboBox comboBox) {
         List<StatusUserEmployee> statusUserEmployees = new ArrayList<>();
         statusUserEmployees.add(StatusUserEmployee.ACTIVATE);
@@ -571,8 +603,12 @@ public class UserManagerView extends Composite<VerticalLayout> {
             confirmButton.addClickListener(event -> {
                 textField.setValue(userEmployeeEdit.getName());
                 textUsername.setValue(userEmployeeEdit.getUsername());
+                textUsername.setInvalid(false);
+                textUsername.setReadOnly(true);
                 datePicker.setValue(userEmployeeEdit.getBirthDate());
                 emailField.setValue(userEmployeeEdit.getEmail());
+                emailField.setRequired(false);
+                emailField.setInvalid(false);
                 StatusUserEmployee statusUserEmployee = userEmployeeEdit.isActive() ? StatusUserEmployee.ACTIVATE : StatusUserEmployee.DISABLE;
                 comboBoxStatus.setValue(statusUserEmployee);
                 GroupEmployee groupEmployee = userEmployeeEdit.getGroupEmployees().get(0);
@@ -641,7 +677,7 @@ public class UserManagerView extends Composite<VerticalLayout> {
     }
 
     private void saveUserEmployee(){
-        UserEmployee userEmployee = userEmployeeService.findByEmail(emailField.getValue()).orElse(new UserEmployee());
+        UserEmployee userEmployee = userEmployeeService.findByUsernameIgnoreCase(textUsername.getValue()).orElse(new UserEmployee());
         if(userEmployee.isNew()){
             try {
                 userEmployee.setName(textField.getValue());
@@ -670,7 +706,7 @@ public class UserManagerView extends Composite<VerticalLayout> {
         } else {
             try {
                 userEmployee.setName(textField.getValue());
-                userEmployee.setUsername(textUsername.getValue());
+//                userEmployee.setUsername(textUsername.getValue());
                 userEmployee.setBirthDate(datePicker.getValue());
                 String currentEmail = emailField.getValue();
                 String existingEmail = userEmployeeService.get(userEmployee.getCode()).orElseThrow().getEmail();
@@ -782,6 +818,8 @@ public class UserManagerView extends Composite<VerticalLayout> {
         textField.setInvalid(false);
         textUsername.clear();
         textUsername.setInvalid(false);
+        textUsername.setEnabled(true);
+        textUsername.setReadOnly(false);
         datePicker.clear();
         datePicker.setInvalid(false);
         emailField.clear();
