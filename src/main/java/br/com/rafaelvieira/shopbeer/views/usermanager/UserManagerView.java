@@ -37,10 +37,10 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.PasswordField;
-import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
+import com.vaadin.flow.data.provider.QuerySortOrder;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.LitRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
@@ -52,6 +52,7 @@ import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 import com.vaadin.flow.theme.lumo.LumoUtility.Gap;
 import java.util.*;
+import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -82,9 +83,7 @@ public class UserManagerView extends Composite<VerticalLayout> {
     H3 h3 = new H3();
     FormLayout formLayout2Col = new FormLayout();
     TextField textField = new TextField();
-    TextArea textAreaInfoGrid = new TextArea();
     TextField textUsername = new TextField();
-    TextField searchField = new TextField();
     DatePicker datePicker = new DatePicker();
     InputMask datePickerInputMask = new InputMask("00/00/0000");
     EmailField emailField = new EmailField();
@@ -103,6 +102,7 @@ public class UserManagerView extends Composite<VerticalLayout> {
     Upload upload = new Upload(buffer);
     Dialog dialog = new Dialog();
     List<String> allowedRoles = Arrays.asList("ROLE_ADMIN", "USER");
+
     UserPermissionChecker<UserEmployee> checker = new UserPermissionChecker<>(securityContextHolder, allowedRoles);
 
     public UserManagerView(UserEmployeeService userEmployeeService,
@@ -333,6 +333,32 @@ public class UserManagerView extends Composite<VerticalLayout> {
         buttonCancel.addClickListener(event -> this.cancelFields());
 
         List<UserEmployee> userEmployees = userEmployeeService.findAll();
+        if(userEmployees == null){
+            userEmployees = new ArrayList<>();
+        }
+        GridListDataView<UserEmployee> dataView = stripedGrid.setItems(userEmployees);
+
+        TextField searchField = new TextField();
+        searchField.setWidth("100%");
+        searchField.setPlaceholder("Procurar usuário");
+        searchField.setPrefixComponent(new Icon(VaadinIcon.SEARCH));
+        searchField.setValueChangeMode(ValueChangeMode.EAGER);
+        searchField.addValueChangeListener(e -> dataView.refreshAll());
+
+        dataView.addFilter(userEmployee -> {
+            String searchTerm = searchField.getValue().trim();
+
+            if (searchTerm.isEmpty())
+                return true;
+
+            boolean matchesFullName = matchesTerm(userEmployee.getName(),
+                    searchTerm);
+            boolean matchesEmail = matchesTerm(userEmployee.getEmail(), searchTerm);
+            boolean matchesProfession = matchesTerm(userEmployee.getUsername(),
+                    searchTerm);
+
+            return matchesFullName || matchesEmail || matchesProfession;
+        });
 
         stripedGrid.setWidth("100%");
         stripedGrid.getStyle().set("flex-grow", "0");
@@ -354,10 +380,14 @@ public class UserManagerView extends Composite<VerticalLayout> {
             return divCode;
         })).setHeader(new Html("<div style='text-align:center; color:white'>CÓDIGO</div>"))
                 .setAutoWidth(true).setFlexGrow(0)
+                .setSortable(true).setKey("code")
                 .setFooter(new Html("<div style='color:white'>" + String.format("Total Usuários: %d", userEmployees.size()) + "</div>"));
 
         stripedGrid.addColumn(createEmployeeRenderer())
                 .setHeader(new Html("<div style='text-align:center; color:white'>DADOS PESSOAL</div>"))
+                .setSortOrderProvider(
+                        direction -> (Stream<QuerySortOrder>) dataView
+                                .setSortOrder(UserEmployee::getName, direction))
                 .setAutoWidth(true).setFlexGrow(0);
 
         stripedGrid.addColumn(new ComponentRenderer<>(userEmployee -> {
@@ -388,48 +418,8 @@ public class UserManagerView extends Composite<VerticalLayout> {
                 .setHeader(new Html("<div style='text-align:center; color:white'>AÇÕES</div>"));
 
         stripedGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
+        // end::snippet1[]
         setGridSampleData(stripedGrid);
-
-        textAreaInfoGrid.setLabel("Informações completa");
-        textAreaInfoGrid.setReadOnly(true);
-        textAreaInfoGrid.setClearButtonVisible(true);
-        textAreaInfoGrid.setWidthFull();
-
-        stripedGrid.addCellFocusListener(event -> {
-            String row = event.getItem().map(value -> String.valueOf(userEmployees.indexOf(value))).orElse("Not available");
-            String code = event.getItem().map(u -> String.valueOf(u.getCode())).orElse("Not available");
-            String name = event.getItem().map(u -> u.getName() + " - " + u.getUsername()).orElse("Not available");
-            String email = event.getItem().map(u -> String.valueOf(u.getEmail())).orElse("Not available");
-            String group = event.getItem().map(u -> String.valueOf(u.getGroupEmployees().get(0).getName())).orElse("Not available");
-            String profile = event.getItem().map(u -> u.getRoles().iterator().next().getName()).orElse("Not available");
-
-            String eventSummary = String.format(
-                    "Código: %s%nFuncionário: %s%nE-mail: %s%nGrupo: %s%nPerfil: %s%nLinha: %s",
-                    code, name, email, group, profile, row);
-
-            textAreaInfoGrid.setValue(eventSummary);
-        });
-
-        GridListDataView<UserEmployee> dataView = stripedGrid.setItems(userEmployees);
-
-        searchField.setWidth("100%");
-        searchField.setPlaceholder("Procurar usuário");
-        searchField.setPrefixComponent(new Icon(VaadinIcon.SEARCH));
-        searchField.setValueChangeMode(ValueChangeMode.EAGER);
-        searchField.addValueChangeListener(e -> dataView.refreshAll());
-
-        dataView.addFilter(user -> {
-            String searchTerm = searchField.getValue().trim();
-
-            if (searchTerm.isEmpty())
-                return true;
-
-            boolean matchesFullName = matchesTerm(user.getName(), searchTerm);
-            boolean matchesEmail = matchesTerm(user.getEmail(), searchTerm);
-            boolean matchesUsername = matchesTerm(user.getUsername(), searchTerm);
-
-            return matchesFullName || matchesEmail || matchesUsername;
-        });
 
         getContent().add(layoutColumn2);
         layoutColumn2.setPadding(false);
@@ -450,7 +440,7 @@ public class UserManagerView extends Composite<VerticalLayout> {
         layoutRow2.add(buttonSave);
         layoutRow2.add(buttonCancel);
         layoutColumn2.add(searchField, stripedGrid);
-        getContent().add(stripedGrid, textAreaInfoGrid);
+        getContent().add(stripedGrid);
     }
 
     public void setValidEmail(EmailField emailField) {
@@ -716,6 +706,7 @@ public class UserManagerView extends Composite<VerticalLayout> {
         } else {
             try {
                 userEmployee.setName(textField.getValue());
+//                userEmployee.setUsername(textUsername.getValue());
                 userEmployee.setBirthDate(datePicker.getValue());
                 String currentEmail = emailField.getValue();
                 String existingEmail = userEmployeeService.get(userEmployee.getCode()).orElseThrow().getEmail();
@@ -829,8 +820,6 @@ public class UserManagerView extends Composite<VerticalLayout> {
         textUsername.setInvalid(false);
         textUsername.setEnabled(true);
         textUsername.setReadOnly(false);
-        textAreaInfoGrid.clear();
-        textAreaInfoGrid.setInvalid(false);
         datePicker.clear();
         datePicker.setInvalid(false);
         emailField.clear();

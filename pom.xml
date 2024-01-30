@@ -31,12 +31,6 @@
             <id>github</id>
             <name>GitHub Packages</name>
             <url>https://maven.pkg.github.com/rafaelrok/shopbeer-v</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
         </repository>
     </distributionManagement>
 

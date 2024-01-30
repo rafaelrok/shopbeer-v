@@ -16,7 +16,6 @@ import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.Uses;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.grid.CellFocusEvent;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.dataview.GridListDataView;
@@ -32,12 +31,11 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.provider.QuerySortOrder;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.LitRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
-import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.function.SerializableBiConsumer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -45,6 +43,7 @@ import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import java.util.*;
+import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -72,8 +71,6 @@ public class CityRegisterView extends Composite<VerticalLayout> {
     H3 h3 = new H3();
     FormLayout formLayout2Col = new FormLayout();
     TextField textField = new TextField();
-    TextArea textAreaInfoGrid = new TextArea();
-    TextField searchField = new TextField();
     ComboBox comboBoxCountry = new ComboBox();
     ComboBox comboBoxState = new ComboBox();
     HorizontalLayout layoutRow = new HorizontalLayout();
@@ -190,6 +187,7 @@ public class CityRegisterView extends Composite<VerticalLayout> {
         buttonSecondary.addClickListener(event -> this.cancelFields());
 
         List<City> cities = cityService.findAll();
+        GridListDataView<City> dataViewCity = stripedGrid.setItems(cities);
 
         stripedGrid.setWidth("100%");
             stripedGrid.getStyle().set("flex-grow", "0");
@@ -211,7 +209,10 @@ public class CityRegisterView extends Composite<VerticalLayout> {
                         return divCode;
                     })).setHeader(new Html("<div style='text-align:center; color:white'>CÓDIGO</div>"))
                         .setWidth("95px")
-                        .setFooter(new Html("<div style='color:white'>" + String.format("Total Cidades: %d", cities.size()) + "</div>"));
+                        .setFooter(new Html("<div style='color:white'>" + String.format("Total Cidades: %d", cities.size()) + "</div>"))
+                        .setSortOrderProvider(
+                            direction -> (Stream<QuerySortOrder>) dataViewCity
+                                    .setSortOrder(City::getCode, direction));
 
             stripedGrid.addColumn(new ComponentRenderer<>(city -> {
                         Div divCode = new Div();
@@ -221,10 +222,16 @@ public class CityRegisterView extends Composite<VerticalLayout> {
                         divCode.getStyle().set("align-items", "center");
                         return divCode;
                     })).setHeader(new Html("<div style='text-align:center; color:white'>NOME</div>"))
+                    .setSortOrderProvider(
+                            direction -> (Stream<QuerySortOrder>) dataViewCity
+                                    .setSortOrder(City::getName, direction))
                     .setWidth("250px");
 
         stripedGrid.addColumn(createStateRenderer())
                 .setHeader(new Html("<div style='text-align:center; color:white'>ESTADO</div>"))
+                .setSortOrderProvider(
+                        direction -> (Stream<QuerySortOrder>) dataViewCity
+                                .setSortOrder(city -> city.getState().getName(), direction))
                 .setWidth("200px");
 
         stripedGrid.addColumn(new ComponentRenderer<>(city -> {
@@ -240,53 +247,14 @@ public class CityRegisterView extends Composite<VerticalLayout> {
                 })).setHeader(new Html("<div style='text-align:center; color:white'>PAIS</div>"))
                 .setWidth("100px");
 
-        stripedGrid.addColumn(new ComponentRenderer<>(this::actionManager))
+            stripedGrid.addColumn(
+                            new ComponentRenderer<>(this::actionManager))
                     .setHeader(new Html("<div style='text-align:center; color:white'>AÇÕES</div>"))
                     .setWidth("80px").setFlexGrow(0)
                     .setAutoWidth(true);
 
-        stripedGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
-        setGridSampleData(stripedGrid);
-
-        textAreaInfoGrid.setLabel("Informações completa");
-        textAreaInfoGrid.setReadOnly(true);
-        textAreaInfoGrid.setWidthFull();
-
-        stripedGrid.addCellFocusListener(event -> {
-            CellFocusEvent.GridSection section = event.getSection();
-            String row = event.getItem().map(value -> String.valueOf(cities.indexOf(value))).orElse("Not available");
-            String code = event.getItem().map(c -> String.valueOf(c.getCode())).orElse("Not available");
-            String name = event.getItem().map(c -> String.valueOf(c.getName())).orElse("Not available");
-            String estado = event.getItem().map(c -> c.getState().getName() + " - " + c.getState().getAcronym()).orElse("Not available");
-            String country = event.getItem().map(c -> String.valueOf(c.getCountry())).orElse("Not available");
-
-            String eventSummary = String.format(
-                    "Código: %s%nCidade: %s%nEstado: %s%nPais: %s%nSessão: %s%nLinha: %s",
-                    code, name, estado, country, section, row);
-
-            textAreaInfoGrid.setValue(eventSummary);
-        });
-
-        GridListDataView<City> dataView = stripedGrid.setItems(cities);    
-
-        searchField.setWidth("100%");
-        searchField.setPlaceholder("Procurar");
-        searchField.setPrefixComponent(new Icon(VaadinIcon.SEARCH));
-        searchField.setValueChangeMode(ValueChangeMode.EAGER);
-        searchField.addValueChangeListener(e -> dataView.refreshAll());
-
-        dataView.addFilter(city -> {
-            String searchTerm = searchField.getValue().trim();
-
-            if (searchTerm.isEmpty())
-                return true;
-
-            boolean matchesName = matchesTerm(city.getName(), searchTerm);
-            boolean matchesState = matchesTerm(city.getState().getName(), searchTerm);
-            boolean matchesCountry = matchesTerm(city.getCountry().getName(), searchTerm);
-
-            return matchesName || matchesState || matchesCountry;
-        });
+            stripedGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
+            setGridSampleData(stripedGrid);
 
         getContent().add(layoutColumn2, dialog);
         layoutColumn2.add(h3);
@@ -298,12 +266,7 @@ public class CityRegisterView extends Composite<VerticalLayout> {
         layoutColumn2.add(layoutRow);
         layoutRow.add(buttonPrimary);
         layoutRow.add(buttonSecondary);
-        layoutColumn2.add(searchField, stripedGrid);
-        layoutColumn2.add(stripedGrid, textAreaInfoGrid);
-    }
-
-    private boolean matchesTerm(String value, String searchTerm) {
-        return value.toLowerCase().contains(searchTerm.toLowerCase());
+        layoutColumn2.add(stripedGrid);
     }
 
     public void stateNew(State state) {
