@@ -68,11 +68,18 @@ jobs:
           export clean_version=$(echo ${{ steps.project.outputs.version }} |  sed 's/[^0-9\.]//g')
           echo ::set-output name=version::$clean_version
 
+      #Apply permissions to '-SNAPSHOT'
+      - name: Grant write permission to the package
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+          docker run --rm ghcr.io/docker/metadata-action:latest --config .github/docker/metadata.yml --image docker.pkg.github.com/${{ github.repository }}/shopbeer-v:latest
+
       #Build maven.
       - name: Publish to GitHub Packages Apache Maven
         run: mvn clean deploy -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Darguments=-DskipITs -s $GITHUB_WORKSPACE/settings.xml
         env:
           GITHUB_TOKEN: ${{ github.token }}
+#          GITHUB_TOKEN: ${{ secrets.AUTH_GITHUB }}
 
       #Build Docker
       - name: Docker Login

@@ -37,7 +37,6 @@ import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.provider.QuerySortOrder;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.LitRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
@@ -49,7 +48,6 @@ import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import java.util.*;
-import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -97,6 +95,7 @@ public class CostumerRegisterView extends Composite<VerticalLayout> {
     HorizontalLayout layoutRow2 = new HorizontalLayout();
     TextField textFieldName = new TextField();
     TextField textFieldCpfCnpj = new TextField();
+    TextField searchField = new TextField();
     InputMask cpfFieldMask = new InputMask("000.000.000-00");
     InputMask cnpjFieldMask = new InputMask("00.000.000/0000-00");
     TextField textFieldPhone = new TextField();
@@ -395,32 +394,6 @@ public class CostumerRegisterView extends Composite<VerticalLayout> {
         buttonCancel.addClickListener(event -> {this.cancelFields();});
 
         List<Costumer> costumers = costumerService.findAll();
-        if(costumers == null){
-            costumers = new ArrayList<>();
-        }
-        GridListDataView<Costumer> dataView = costumerGrid.setItems(costumers);
-
-        TextField searchField = new TextField();
-        searchField.setWidth("100%");
-        searchField.setPlaceholder("Procurar");
-        searchField.setPrefixComponent(new Icon(VaadinIcon.SEARCH));
-        searchField.setValueChangeMode(ValueChangeMode.EAGER);
-        searchField.addValueChangeListener(e -> dataView.refreshAll());
-
-        dataView.addFilter(costumer -> {
-            String searchTerm = searchField.getValue().trim();
-
-            if (searchTerm.isEmpty())
-                return true;
-
-            boolean matchesFullName = matchesTerm(costumer.getName(),
-                    searchTerm);
-            boolean matchesEmail = matchesTerm(costumer.getEmail(), searchTerm);
-            boolean matchesCpfcnpj = matchesTerm(costumer.getCpfcnpj(),
-                    searchTerm);
-
-            return matchesFullName || matchesEmail || matchesCpfcnpj;
-        });
 
         costumerGrid.setWidth("100%");
         costumerGrid.getStyle().set("flex-grow", "0");
@@ -444,7 +417,6 @@ public class CostumerRegisterView extends Composite<VerticalLayout> {
                     return divCode;
                 })).setHeader(new Html("<div style='text-align:center; width: 55px; color:white'>CÓDIGO</div>"))
                 .setAutoWidth(true).setFlexGrow(0)
-                .setSortable(true).setKey("code")
                 .setFooter(new Html("<div style='color:white'>" + String.format("Total Clientes: %d", costumers.size()) + "</div>"));
 
         costumerGrid.addColumn(new ComponentRenderer<>( costumer -> {
@@ -461,31 +433,42 @@ public class CostumerRegisterView extends Composite<VerticalLayout> {
 
         costumerGrid.addColumn(createCostumerInfoRenderer())
                 .setHeader(new Html("<div style='text-align:start; width: 200px; color:white'>INFO PESSOAL</div>"))
-                .setSortOrderProvider(
-                        direction -> (Stream<QuerySortOrder>) dataView
-                                .setSortOrder(Costumer::getName, direction))
                 .setAutoWidth(true).setFlexGrow(0);
 
         costumerGrid.addColumn(createCostumerAddressRenderer())
                 .setHeader(new Html("<div style='text-align:start; width: 170px; color:white'>ENDEREÇO</div>"))
-                .setSortOrderProvider(
-                        direction -> (Stream<QuerySortOrder>) dataView
-                                .setSortOrder(c -> c.getAddress().getStreet(), direction))
                 .setAutoWidth(true).setFlexGrow(0);
 
         costumerGrid.addColumn(createStateRenderer())
                 .setHeader(new Html("<div style='text-align:center; width: 100px; color:white'>CIDADE/UF</div>"))
-                .setSortOrderProvider(
-                        direction -> (Stream<QuerySortOrder>) dataView
-                                .setSortOrder(c -> c.getAddress().getState().getName(), direction))
-                .setWidth("200px");
+                .setWidth("200px").setFlexGrow(0);
 
-        costumerGrid.addColumn(
-                        new ComponentRenderer<>(this::actionManager))
+        costumerGrid.addColumn(new ComponentRenderer<>(this::actionManager))
                 .setHeader(new Html("<div style='text-align:center; width: 50px; color:white'>AÇÕES</div>"));
 
         costumerGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
         setGridSampleData(costumerGrid);
+
+        GridListDataView<Costumer> dataView = costumerGrid.setItems(costumers);
+        
+        searchField.setWidth("100%");
+        searchField.setPlaceholder("Procurar");
+        searchField.setPrefixComponent(new Icon(VaadinIcon.SEARCH));
+        searchField.setValueChangeMode(ValueChangeMode.EAGER);
+        searchField.addValueChangeListener(e -> dataView.refreshAll());
+
+        dataView.addFilter(costumer -> {
+            String searchTerm = searchField.getValue().trim();
+
+            if (searchTerm.isEmpty())
+                return true;
+
+            boolean matchesFullName = matchesTerm(costumer.getName(), searchTerm);
+            boolean matchesEmail = matchesTerm(costumer.getEmail(), searchTerm);
+            boolean matchesCpfCnpj = matchesTerm(costumer.getCpfcnpj(), searchTerm);
+
+            return matchesFullName || matchesEmail || matchesCpfCnpj;
+        });
 
         getContent().add(layoutColumn);
         getContent().add(layoutColumn2);
@@ -517,6 +500,7 @@ public class CostumerRegisterView extends Composite<VerticalLayout> {
 
         layoutRow2.add(buttonSave);
         layoutRow2.add(buttonCancel);
+        layoutColumn2.add(searchField, costumerGrid);
         getContent().add(costumerGrid);
     }
 
